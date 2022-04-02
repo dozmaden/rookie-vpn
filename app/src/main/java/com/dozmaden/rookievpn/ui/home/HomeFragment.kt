@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.graphics.Color
 import android.net.VpnService
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.databinding.FragmentHomeBinding
 import com.dozmaden.rookievpn.dto.NetworkInfo
-import com.dozmaden.rookievpn.utils.ConnectionStatus
+import com.dozmaden.rookievpn.state.VpnConnectionStatus
 
 class HomeFragment : Fragment(), View.OnClickListener {
 
@@ -27,23 +28,24 @@ class HomeFragment : Fragment(), View.OnClickListener {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    private fun viewModel() = ViewModelProvider(this)[HomeViewModel::class.java]
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        setConnectionStatusObserver()
         setNetworkInfoObserver()
+        setVpnConnectionStatusObserver()
         binding.connectButton.setOnClickListener(this)
 
-        viewModel().connectionStatus.value?.let { setConnectionStatus(it) }
+        viewModel.checkVpnActivity()
 
-        for (i in 1..5) viewModel().loadNetworkInfo()
+        viewModel.loadNetworkInfo()
 
         return binding.root
     }
@@ -54,16 +56,22 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(p0: View?) {
-        if (viewModel().connectionStatus.value != ConnectionStatus.CONNECTED_TO_VPN) {
-            connectToVpn()
-        } else {
-            disconnectFromVpn()
+        when (viewModel.getConnectionStatus()) {
+            VpnConnectionStatus.NOT_CONNECTED, VpnConnectionStatus.DISCONNECTED -> {
+                connectToVpn()
+            }
+            VpnConnectionStatus.CONNECTING -> {
+                return
+            }
+            else -> {
+                disconnectFromVpn()
+            }
         }
-        viewModel().loadNetworkInfo()
+        viewModel.loadNetworkInfo()
     }
 
     private fun setNetworkInfoObserver() {
-        viewModel().networkInfo.observe(viewLifecycleOwner) { networkInfo ->
+        viewModel.networkInfo.observe(viewLifecycleOwner) { networkInfo ->
             setNetworkInfo(networkInfo)
         }
     }
@@ -76,48 +84,36 @@ class HomeFragment : Fragment(), View.OnClickListener {
         binding.organization.text = network.org
     }
 
-    private fun setConnectionStatusObserver() {
-        viewModel().connectionStatus.observe(viewLifecycleOwner) { connectionStatus ->
-            setConnectionStatus(connectionStatus)
+    private fun setVpnConnectionStatusObserver() {
+        viewModel.connectionStatus.observe(viewLifecycleOwner) { connectionStatus ->
+            setVpnConnectionStatus(connectionStatus)
             setButtonConnectionStatus(connectionStatus)
         }
     }
 
-    private fun setConnectionStatus(status: ConnectionStatus) {
+    private fun setVpnConnectionStatus(status: VpnConnectionStatus) {
         binding.progressCircle.visibility = View.INVISIBLE
         when (status) {
-            ConnectionStatus.NOT_CONNECTED -> {
+            VpnConnectionStatus.NOT_CONNECTED -> {
                 setNetworkStatusText(
-                    "Not connected to any network!",
+                    "Not connected to a VPN!",
                     Color.parseColor("#ff0000")
                 )
             }
-            ConnectionStatus.CONNECTED_TO_NETWORK -> {
-                setNetworkStatusText(
-                    "Connected to a network",
-                    Color.parseColor("#ffd000")
-                )
-            }
-            ConnectionStatus.CONNECTING_TO_VPN -> {
+            VpnConnectionStatus.CONNECTING -> {
                 setNetworkStatusText(
                     "Connecting to VPN...",
                     Color.parseColor("#001eff")
                 )
                 binding.progressCircle.visibility = View.VISIBLE
             }
-            ConnectionStatus.CONNECTED_TO_VPN -> {
+            VpnConnectionStatus.CONNECTED -> {
                 setNetworkStatusText(
                     "Connected to VPN!",
                     Color.parseColor("#04ff00")
                 )
             }
-            ConnectionStatus.CONNECTION_FAILED -> {
-                setNetworkStatusText(
-                    "Connection failed!",
-                    Color.parseColor("#ff0000")
-                )
-            }
-            ConnectionStatus.DISCONNECTED_FROM_VPN -> {
+            VpnConnectionStatus.DISCONNECTED -> {
                 setNetworkStatusText(
                     "Disconnected from VPN",
                     Color.parseColor("#ffd000")
@@ -131,12 +127,19 @@ class HomeFragment : Fragment(), View.OnClickListener {
         binding.networkStatus.setTextColor(col)
     }
 
-    private fun setButtonConnectionStatus(status: ConnectionStatus) {
-        binding.connectButton.text = if (status != ConnectionStatus.CONNECTED_TO_VPN) {
-            requireContext().getString(R.string.connect)
-        } else {
-            requireContext().getString(R.string.disconnect)
-        }
+    private fun setButtonConnectionStatus(status: VpnConnectionStatus) {
+        binding.connectButton.text =
+            when (status) {
+                VpnConnectionStatus.CONNECTED -> {
+                    "Disconnect"
+                }
+                VpnConnectionStatus.CONNECTING -> {
+                    "Connecting..."
+                }
+                else -> {
+                    "Connect"
+                }
+            }
     }
 
     private fun connectToVpn() {
@@ -144,7 +147,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         if (intent != null) {
             startActivityForResult(intent, 1)
         } else {
-            viewModel().startVpn()
+            viewModel.startVpn()
         }
     }
 
@@ -157,7 +160,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         builder.setPositiveButton(
             requireActivity().getString(R.string.yes)
-        ) { _, _ -> viewModel().stopVPN() }
+        ) { _, _ -> viewModel.stopVPN() }
         builder.setNegativeButton(
             requireActivity().getString(R.string.no)
         ) { _, _ -> }
@@ -169,7 +172,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private val broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             try {
-                viewModel().updateVpnStatus(intent.getStringExtra("state"))
+                viewModel.updateVpnConnectionStatus(intent.getStringExtra("state"))
                 val duration = intent.getStringExtra("duration")
                 val lastPacketReceive = intent.getStringExtra("lastPacketReceive")
                 val byteIn = intent.getStringExtra("byteIn")
@@ -201,11 +204,41 @@ class HomeFragment : Fragment(), View.OnClickListener {
     override fun onResume() {
         LocalBroadcastManager.getInstance(requireActivity())
             .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
+        val str = viewModel.getConnectionStatus().toString()
+        Log.d("ONRESUME", str)
+
+        viewModel.checkVpnActivity()
+
         super.onResume()
     }
 
     override fun onPause() {
         LocalBroadcastManager.getInstance(requireActivity()).unregisterReceiver(broadcastReceiver)
+        val str = viewModel.getConnectionStatus().toString()
+        Log.d("ONPAUSE", str)
+
+        viewModel.checkVpnActivity()
+
         super.onPause()
+    }
+
+    override fun onStart() {
+        LocalBroadcastManager.getInstance(requireActivity())
+            .registerReceiver(broadcastReceiver, IntentFilter("connectionState"))
+        val str = viewModel.getConnectionStatus().toString()
+        Log.d("ONSTART", str)
+
+        viewModel.checkVpnActivity()
+
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+//        viewModel.stopVPN()
+        super.onDestroy()
     }
 }

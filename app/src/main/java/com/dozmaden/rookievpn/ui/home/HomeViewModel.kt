@@ -8,10 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import com.dozmaden.rookievpn.dto.NetworkInfo
 import com.dozmaden.rookievpn.model.Server
 import com.dozmaden.rookievpn.repository.NetworkRepository
-import com.dozmaden.rookievpn.utils.ConnectionStatus
+import com.dozmaden.rookievpn.state.VpnConnectionStatus
 import com.dozmaden.rookievpn.utils.SharedPreference
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
+import de.blinkt.openvpn.core.VpnStatus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -33,42 +34,55 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _networkInfo = MutableLiveData<NetworkInfo>()
     internal val networkInfo: LiveData<NetworkInfo> = _networkInfo
 
-    private val _connectionStatus = MutableLiveData<ConnectionStatus>()
-//        .apply {
-//        postValue(ConnectionStatus.NOT_CONNECTED)
-//    }
-    internal val connectionStatus: LiveData<ConnectionStatus> = _connectionStatus
+    private val _connectionStatus = MutableLiveData<VpnConnectionStatus>()
+        .apply {
+            postValue(VpnConnectionStatus.NOT_CONNECTED)
+        }
+    internal val connectionStatus: LiveData<VpnConnectionStatus> = _connectionStatus
+    internal fun getConnectionStatus() = connectionStatus.value
 
     internal fun loadNetworkInfo() {
         NetworkRepository.getNetworkInfo().observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { info ->
                     _networkInfo.postValue(info)
-                    _connectionStatus.postValue(ConnectionStatus.CONNECTED_TO_NETWORK)
-                    if (_networkInfo.value?.proxy == "true") {
-                        _connectionStatus.postValue(ConnectionStatus.CONNECTED_TO_VPN)
-                    }
+//                    if (_networkInfo.value?.proxy == "true") {
+//                        _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
+//                    } else {
+//                        _connectionStatus.postValue(VpnConnectionStatus.NOT_CONNECTED)
+//                    }
                 },
                 onError = {
+                    _networkInfo.postValue(
+                        NetworkInfo()
+                    )
 //                    _connectionStatus.postValue(ConnectionStatus.CONNECTION_FAILED)
                 }
             )
             .onBind()
     }
 
-    internal fun updateVpnStatus(status: String?) {
+    internal fun checkVpnActivity() {
+        if (VpnStatus.isVPNActive()) {
+            _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
+        } else {
+            _connectionStatus.postValue(VpnConnectionStatus.NOT_CONNECTED)
+        }
+    }
+
+    internal fun updateVpnConnectionStatus(status: String?) {
         if (status != null) when (status) {
             "NONETWORK" -> {
-                _connectionStatus.postValue(ConnectionStatus.NOT_CONNECTED)
+                _connectionStatus.postValue(VpnConnectionStatus.NOT_CONNECTED)
             }
             "WAIT", "AUTH", "RECONNECTING" -> {
-                _connectionStatus.postValue(ConnectionStatus.CONNECTING_TO_VPN)
+                _connectionStatus.postValue(VpnConnectionStatus.CONNECTING)
             }
             "CONNECTED" -> {
-                _connectionStatus.postValue(ConnectionStatus.CONNECTED_TO_VPN)
+                _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
             }
             "DISCONNECTED" -> {
-//                _connectionStatus.postValue(ConnectionStatus.DISCONNECTED_FROM_VPN)
+                _connectionStatus.postValue(VpnConnectionStatus.DISCONNECTED)
             }
         }
     }
@@ -93,8 +107,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
         br.readLine()
 
-//        _connectionStatus.postValue(ConnectionStatus.CONNECTING_TO_VPN)
-//
         OpenVpnApi.startVpn(
             context,
             config,
@@ -106,6 +118,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     internal fun stopVPN() {
         OpenVPNThread.stop()
-        _connectionStatus.postValue(ConnectionStatus.DISCONNECTED_FROM_VPN)
+        _connectionStatus.postValue(VpnConnectionStatus.NOT_CONNECTED)
     }
 }
