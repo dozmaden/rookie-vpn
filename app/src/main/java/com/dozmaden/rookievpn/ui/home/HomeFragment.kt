@@ -43,9 +43,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         setVpnConnectionStatusObserver()
         binding.connectButton.setOnClickListener(this)
 
-        viewModel.checkVpnActivity()
-
-        viewModel.loadNetworkInfo()
+        updateVpnState()
 
         return binding.root
     }
@@ -67,7 +65,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 disconnectFromVpn()
             }
         }
-        viewModel.loadNetworkInfo()
+        updateVpnState()
     }
 
     private fun setNetworkInfoObserver() {
@@ -93,28 +91,30 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private fun setVpnConnectionStatus(status: VpnConnectionStatus) {
         binding.progressCircle.visibility = View.INVISIBLE
+        binding.connectionInfo.visibility = View.INVISIBLE
         when (status) {
             VpnConnectionStatus.NOT_CONNECTED -> {
-                setNetworkStatusText(
+                setConnectionStatusText(
                     "Not connected to a VPN!",
                     Color.parseColor("#ff0000")
                 )
             }
             VpnConnectionStatus.CONNECTING -> {
-                setNetworkStatusText(
+                setConnectionStatusText(
                     "Connecting to VPN...",
                     Color.parseColor("#001eff")
                 )
                 binding.progressCircle.visibility = View.VISIBLE
             }
             VpnConnectionStatus.CONNECTED -> {
-                setNetworkStatusText(
+                setConnectionStatusText(
                     "Connected to VPN!",
                     Color.parseColor("#04ff00")
                 )
+                binding.connectionInfo.visibility = View.VISIBLE
             }
             VpnConnectionStatus.DISCONNECTED -> {
-                setNetworkStatusText(
+                setConnectionStatusText(
                     "Disconnected from VPN",
                     Color.parseColor("#ffd000")
                 )
@@ -122,9 +122,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun setNetworkStatusText(str: String, col: Int) {
-        binding.networkStatus.text = str
-        binding.networkStatus.setTextColor(col)
+    private fun setConnectionStatusText(str: String, col: Int) {
+        binding.connectionStatus.text = str
+        binding.connectionStatus.setTextColor(col)
     }
 
     private fun setButtonConnectionStatus(status: VpnConnectionStatus) {
@@ -173,10 +173,16 @@ class HomeFragment : Fragment(), View.OnClickListener {
         override fun onReceive(context: Context, intent: Intent) {
             try {
                 viewModel.updateVpnConnectionStatus(intent.getStringExtra("state"))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            try {
                 val duration = intent.getStringExtra("duration")
                 val lastPacketReceive = intent.getStringExtra("lastPacketReceive")
                 val byteIn = intent.getStringExtra("byteIn")
                 val byteOut = intent.getStringExtra("byteOut")
+
                 updateConnectionInfo(duration, lastPacketReceive, byteIn, byteOut)
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -190,14 +196,17 @@ class HomeFragment : Fragment(), View.OnClickListener {
         byteIn: String?,
         byteOut: String?
     ) {
-        if (duration != null && lastPacket != null && byteIn != null && byteOut != null) {
-            binding.connectionInfo.visibility = View.VISIBLE
-            binding.duration.text = "00:00:00"
-            binding.lastPacket.text = "0"
-            binding.bytesIn.text = " "
-            binding.bytesOut.text = " "
-        } else {
-            binding.connectionInfo.visibility = View.INVISIBLE
+        duration?.let {
+            binding.duration.text = "Duration: " + duration
+        }
+        lastPacket?.let {
+            binding.lastPacket.text = "Last Packet Received: " + lastPacket + " second ago"
+        }
+        byteIn?.let {
+            binding.bytesIn.text = "Bytes In: " + byteIn
+        }
+        byteOut?.let {
+            binding.bytesOut.text = "Bytes Out: " + byteOut
         }
     }
 
@@ -207,7 +216,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val str = viewModel.getConnectionStatus().toString()
         Log.d("ONRESUME", str)
 
-        viewModel.checkVpnActivity()
+        updateVpnState()
 
         super.onResume()
     }
@@ -217,7 +226,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val str = viewModel.getConnectionStatus().toString()
         Log.d("ONPAUSE", str)
 
-        viewModel.checkVpnActivity()
+        updateVpnState()
 
         super.onPause()
     }
@@ -228,17 +237,13 @@ class HomeFragment : Fragment(), View.OnClickListener {
         val str = viewModel.getConnectionStatus().toString()
         Log.d("ONSTART", str)
 
-        viewModel.checkVpnActivity()
+        updateVpnState()
 
         super.onStart()
     }
 
-    override fun onStop() {
-        super.onStop()
-    }
-
-    override fun onDestroy() {
-//        viewModel.stopVPN()
-        super.onDestroy()
+    private fun updateVpnState() {
+        viewModel.checkVpnActivity()
+        viewModel.loadNetworkInfo()
     }
 }
