@@ -14,7 +14,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
-        android:hint="You are connected to:"
         android:shadowColor="#000000"
         android:shadowDx="2.0"
         android:shadowDy="2.0"
@@ -49,7 +48,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:hint="IP address"
             android:shadowColor="#000000"
             android:shadowDx="1.5"
             android:shadowDy="1.3"
@@ -71,7 +69,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
-                android:hint="Country"
                 android:textAlignment="center"
                 android:textSize="26sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +81,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:hint="Region"
                 android:textAlignment="center"
                 android:textSize="26sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -101,7 +97,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
-            android:hint="Local ISP"
             android:textAlignment="center"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -115,7 +110,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
-            android:hint="Organization name"
             android:textAlignment="center"
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -123,21 +117,6 @@
             app:layout_constraintTop_toTopOf="@+id/isp" />
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/loading_network_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_marginBottom="10dp"
-        android:text="Loading..."
-        android:textAlignment="center"
-        android:textSize="30sp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/connection_info"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/connection_status" />
 
     <LinearLayout
         android:id="@+id/connection_info"
@@ -158,7 +137,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:hint="Duration"
             android:textAlignment="center"
             android:textSize="16sp" />
 
@@ -169,7 +147,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:hint="Last packet received"
             android:textAlignment="center"
             android:textSize="16sp" />
 
@@ -180,9 +157,9 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:hint="Duration"
             android:textAlignment="center"
-            android:textSize="16sp">
+            android:textSize="16sp"
+            tools:text="">
 
         </TextView>
 
@@ -193,7 +170,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:hint="Duration"
             android:textAlignment="center"
             android:textSize="16sp">
 

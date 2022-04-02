@@ -62,6 +62,17 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             .onBind()
     }
 
+    internal fun loadVpnNetworkInfo() {
+        if (connectionStatus.value == VpnConnectionStatus.CONNECTED) {
+            _networkInfo.postValue(
+                NetworkInfo(
+                    country = server?.country!!,
+                    ip = server.vpn
+                )
+            )
+        }
+    }
+
     internal fun checkVpnActivity() {
         if (VpnStatus.isVPNActive()) {
             _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
