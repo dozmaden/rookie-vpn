@@ -17,8 +17,8 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.dozmaden.rookievpn.ui.notifications.NotificationsFragment"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_applications"
+        android:name="com.dozmaden.rookievpn.ui.applications.ApplicationsFragment"
+        tools:layout="@layout/fragment_applications" />
 
 </navigation>

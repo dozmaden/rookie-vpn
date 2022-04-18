@@ -7,9 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dozmaden.rookievpn.dto.NetworkInfo
 import com.dozmaden.rookievpn.model.Server
+import com.dozmaden.rookievpn.preferences.SharedPreference
 import com.dozmaden.rookievpn.repository.NetworkRepository
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
-import com.dozmaden.rookievpn.utils.SharedPreference
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
 import de.blinkt.openvpn.core.VpnStatus
@@ -46,31 +46,20 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             .subscribeBy(
                 onSuccess = { info ->
                     _networkInfo.postValue(info)
-//                    if (_networkInfo.value?.proxy == "true") {
-//                        _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
-//                    } else {
+                    if (_networkInfo.value?.proxy == "true") {
+                        _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
+                    }
+//                    else {
 //                        _connectionStatus.postValue(VpnConnectionStatus.NOT_CONNECTED)
 //                    }
                 },
                 onError = {
-                    _networkInfo.postValue(
-                        NetworkInfo()
-                    )
-//                    _connectionStatus.postValue(ConnectionStatus.CONNECTION_FAILED)
+//                    _networkInfo.postValue(
+//                        NetworkInfo()
+//                    )
                 }
             )
             .onBind()
-    }
-
-    internal fun loadVpnNetworkInfo() {
-        if (connectionStatus.value == VpnConnectionStatus.CONNECTED) {
-            _networkInfo.postValue(
-                NetworkInfo(
-                    country = server?.country!!,
-                    ip = server.vpn
-                )
-            )
-        }
     }
 
     internal fun checkVpnActivity() {

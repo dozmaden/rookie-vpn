@@ -112,7 +112,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     Color.parseColor("#04ff00")
                 )
                 binding.connectionInfo.visibility = View.VISIBLE
-                viewModel.loadVpnNetworkInfo()
             }
             VpnConnectionStatus.DISCONNECTED -> {
                 setConnectionStatusText(
