@@ -49,6 +49,7 @@ class AppsAdapter :
     }
 
     inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+
         private val appName: TextView = view.findViewById(id.app_name)
         private val appIcon: ImageView = view.findViewById(id.app_image)
         private val card: CardView = view.findViewById(id.card)

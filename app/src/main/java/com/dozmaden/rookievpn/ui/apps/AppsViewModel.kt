@@ -18,25 +18,24 @@ class AppsViewModel(
 
     @SuppressLint("StaticFieldLeak")
     private val context = getApplication<Application>().applicationContext
+    private val appInfoHolder = AppInfoHolder(context)
 
-    private val applicationInteractor = AppInteractor(AppInfoHolder(context))
+    private val appInteractor = AppInteractor(appInfoHolder)
+    private val appsList = appInteractor.getAppsList()
 
-    private val preferenceStorage: AppsPreferences = AppsPreferences(context)
-
-    private val appsList = applicationInteractor.getAppsList()
-
-    val focusModeStatusFlow = preferenceStorage.autoModeStatusFlow
+    private val appsPreferences: AppsPreferences = AppsPreferences(context)
+    val autoModeStatusFlow = appsPreferences.autoModeStatusFlow
 
     val selectedAppsFlow: Flow<List<App>> =
-        preferenceStorage.selectedAppsFlow
+        appsPreferences.selectedAppsFlow
             .map {
-                it.map(applicationInteractor::mapSelectedApp)
+                it.map(appInteractor::mapSelectedApp)
                     .sortedBy { app -> app.appLabel }
             }
             .flowOn(Dispatchers.Default)
 
     val unselectedAppsFlow: Flow<List<App>> =
-        preferenceStorage.selectedAppsFlow
+        appsPreferences.selectedAppsFlow
             .map { selected ->
                 appsList
                     .filter { app ->
@@ -46,25 +45,25 @@ class AppsViewModel(
             }
             .flowOn(Dispatchers.Default)
 
-    fun setFocusModeStatus(focusModeOn: Boolean) {
+    fun setAutoModeStatus(focusModeOn: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            preferenceStorage.setAutoVpnStatus(focusModeOn)
+            appsPreferences.setAutoVpnStatus(focusModeOn)
         }
     }
 
-    fun getFocusModeStatus(): Boolean {
-        return preferenceStorage.getAutoStatus()
+    fun getAutoModeStatus(): Boolean {
+        return appsPreferences.getAutoStatus()
     }
 
     fun addToSelected(app: App) {
         viewModelScope.launch(Dispatchers.Default) {
-            preferenceStorage.addSelectedApp(app.packageName)
+            appsPreferences.addSelectedApp(app.packageName)
         }
     }
 
     fun removeFromSelected(app: App) {
         viewModelScope.launch(Dispatchers.Default) {
-            preferenceStorage.removeSelectedApp(app.packageName)
+            appsPreferences.removeSelectedApp(app.packageName)
         }
     }
 }

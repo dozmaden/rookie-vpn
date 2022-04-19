@@ -2,7 +2,6 @@ package com.dozmaden.rookievpn.ui.apps
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -22,6 +21,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.databinding.FragmentApplicationsBinding
+import com.dozmaden.rookievpn.utils.AccessibilityUtilities.isAccessibilitySettingsOn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -40,7 +40,7 @@ class AppsFragment : Fragment() {
     private lateinit var unselectedTitle: TextView
     private lateinit var unselectedApps: RecyclerView
 
-    private lateinit var focusModeButton: Button
+    private lateinit var autoModeButton: Button
 
     private var _binding: FragmentApplicationsBinding? = null
 
@@ -66,8 +66,7 @@ class AppsFragment : Fragment() {
         setupScrollView(view)
         setupSelectedApps(view)
         setupUnselectedApps(view)
-        setupFocusButton(view)
-//        setupFocusButton(view)
+        setupAutoModeButton(view)
     }
 
     override fun onDestroyView() {
@@ -80,26 +79,29 @@ class AppsFragment : Fragment() {
         scrollView = view.findViewById(R.id.scroll_view)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupSelectedApps(view: View) {
         selectedTitle = view.findViewById(R.id.selected_title)
         unselectedTitle = view.findViewById(R.id.unselected_title)
         selectedApps = view.findViewById(R.id.selected_apps)
+
         val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::removeFromSelected)
         selectedApps.adapter = adapter
-//        blacklistApps.itemAnimator = FadeInUpAnimator()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.selectedAppsFlow.collect {
                     selectedTitle.text =
-                        if (it.isEmpty()) "Applications:" else "Selected applications:"
-
+                        if (it.isEmpty()) {
+                            "Applications:"
+                        } else {
+                            "Selected applications:"
+                        }
                     it.isNotEmpty().let {
                         unselectedTitle.isVisible = it
-                        unselectedTitle.text = "Applications: "
+                        unselectedTitle.text = "Applications:"
                     }
-
                     adapter.submitList(it)
                 }
             }
@@ -111,7 +113,6 @@ class AppsFragment : Fragment() {
         val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::addToSelected)
         unselectedApps.adapter = adapter
-//        allowedApps.itemAnimator = FadeInDownAnimator()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -123,34 +124,39 @@ class AppsFragment : Fragment() {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun setupFocusButton(view: View) {
-        focusModeButton = view.findViewById(R.id.focus_mode_button)
-        focusModeButton.setOnClickListener {
+    private fun setupAutoModeButton(view: View) {
+        autoModeButton = view.findViewById(R.id.focus_mode_button)
+        autoModeButton.setOnClickListener {
             if (!requireContext().isAccessibilitySettingsOn()) {
-                openAccessibilityService()
+                startAccessibilityService()
                 return@setOnClickListener
             }
-            val focusModeOn = !viewModel.getFocusModeStatus()
-            viewModel.setFocusModeStatus(focusModeOn)
+            val autoModeOn = !viewModel.getAutoModeStatus()
+            viewModel.setAutoModeStatus(autoModeOn)
             val msg =
-                if (focusModeOn) "Auto-connect has been enabled!" else "Auto-connect stopped!"
+                if (autoModeOn) {
+                    "Auto-connect has been enabled!"
+                } else {
+                    "Auto-connect stopped!"
+                }
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedAppsFlow.combine(viewModel.focusModeStatusFlow) { selected, focusModeOn ->
-                    focusModeButton.isEnabled =
+                viewModel.selectedAppsFlow.combine(viewModel.autoModeStatusFlow) { selected, focusModeOn ->
+                    autoModeButton.isEnabled =
                         if (focusModeOn && requireContext().isAccessibilitySettingsOn()) {
                             true
                         } else {
                             selected.isNotEmpty()
                         }
-                    focusModeButton.text =
-                        if (focusModeOn && requireContext().isAccessibilitySettingsOn())
+                    autoModeButton.text =
+                        if (focusModeOn && requireContext().isAccessibilitySettingsOn()) {
                             "Stop Auto-connect"
-                        else
+                        } else {
                             "Start Auto-connect"
+                        }
                 }
                     .flowOn(Dispatchers.Main.immediate)
                     .collect {}
@@ -158,7 +164,7 @@ class AppsFragment : Fragment() {
         }
     }
 
-    private fun openAccessibilityService() {
+    private fun startAccessibilityService() {
         if (!requireContext().isAccessibilitySettingsOn()) {
             val dialog = AlertDialog.Builder(requireContext())
                 .setTitle("Accessibility service")
@@ -176,24 +182,4 @@ class AppsFragment : Fragment() {
             dialog.show()
         }
     }
-}
-
-fun Context.isAccessibilitySettingsOn(): Boolean {
-    try {
-        val accessibilityEnabled = Settings.Secure.getInt(
-            contentResolver,
-            Settings.Secure.ACCESSIBILITY_ENABLED
-        )
-        if (accessibilityEnabled == 1) {
-            val services = Settings.Secure.getString(
-                contentResolver,
-                Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-            )
-            if (services != null) {
-                return services.contains(packageName, ignoreCase = true)
-            }
-        }
-    } catch (e: Throwable) {
-    }
-    return false
 }
