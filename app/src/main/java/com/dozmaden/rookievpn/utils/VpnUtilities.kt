@@ -10,13 +10,7 @@ import de.blinkt.openvpn.core.OpenVPNThread
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-object NetworkUtilities {
-    fun isNetworkAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        val activeNetworkInfo = connectivityManager!!.activeNetworkInfo
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected
-    }
+object VpnUtilities {
 
     fun isVpnConnectionActive(context: Context): Boolean {
         val connectivityManager =

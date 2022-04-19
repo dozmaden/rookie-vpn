@@ -14,8 +14,8 @@ import com.dozmaden.rookievpn.model.VpnServer
 import com.dozmaden.rookievpn.preferences.VpnPreferences
 import com.dozmaden.rookievpn.repository.NetworkRepository
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
-import com.dozmaden.rookievpn.utils.NetworkUtilities.connectToVpn
-import com.dozmaden.rookievpn.utils.NetworkUtilities.disconnectFromVpn
+import com.dozmaden.rookievpn.utils.VpnUtilities.connectToVpn
+import com.dozmaden.rookievpn.utils.VpnUtilities.disconnectFromVpn
 import de.blinkt.openvpn.core.VpnStatus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable

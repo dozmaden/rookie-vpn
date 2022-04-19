@@ -2,9 +2,9 @@ package com.dozmaden.rookievpn.ui.apps
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import com.dozmaden.rookievpn.utils.appIcon
-import com.dozmaden.rookievpn.utils.appLabel
-import com.dozmaden.rookievpn.utils.getAppsList
+import com.dozmaden.rookievpn.utils.AppUtilities.appIcon
+import com.dozmaden.rookievpn.utils.AppUtilities.appLabel
+import com.dozmaden.rookievpn.utils.AppUtilities.getAppsList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

@@ -13,8 +13,8 @@ import com.dozmaden.rookievpn.MainActivity
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.preferences.AppsPreferences
 import com.dozmaden.rookievpn.preferences.VpnPreferences
-import com.dozmaden.rookievpn.utils.NetworkUtilities.connectToVpn
-import com.dozmaden.rookievpn.utils.NetworkUtilities.isVpnConnectionActive
+import com.dozmaden.rookievpn.utils.VpnUtilities.connectToVpn
+import com.dozmaden.rookievpn.utils.VpnUtilities.isVpnConnectionActive
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
