@@ -2,10 +2,8 @@ package com.dozmaden.rookievpn.utils
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
 import bot.box.appusage.utils.UsageUtils
 import com.dozmaden.rookievpn.R
 
