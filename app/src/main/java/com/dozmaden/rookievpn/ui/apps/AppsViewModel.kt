@@ -1,35 +1,33 @@
-package com.dozmaden.rookievpn.ui.applications
+package com.dozmaden.rookievpn.ui.apps
 
 import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.dozmaden.rookievpn.model.ApplicationInfo
-import com.dozmaden.rookievpn.preferences.SharedPreference
-import com.dozmaden.rookievpn.utils.AppInfosHolder
+import com.dozmaden.rookievpn.model.App
+import com.dozmaden.rookievpn.preferences.AppsPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
-class ApplicationsViewModel(
-    application: Application,
-//    private val applicationInteractor: ApplicationInteractor
+class AppsViewModel(
+    application: Application
 ) : AndroidViewModel(application) {
 
     @SuppressLint("StaticFieldLeak")
     private val context = getApplication<Application>().applicationContext
 
-    private val applicationInteractor = ApplicationInteractor(AppInfosHolder(context))
+    private val applicationInteractor = AppInteractor(AppInfoHolder(context))
 
-    public val preferenceStorage: SharedPreference = SharedPreference(context)
+    private val preferenceStorage: AppsPreferences = AppsPreferences(context)
 
     private val appsList = applicationInteractor.getAppsList()
 
-    val focusModeStatusFlow = preferenceStorage.focusModeStatusFlow
+    val focusModeStatusFlow = preferenceStorage.autoModeStatusFlow
 
-    val selectedAppsFlow: Flow<List<ApplicationInfo>> =
+    val selectedAppsFlow: Flow<List<App>> =
         preferenceStorage.selectedAppsFlow
             .map {
                 it.map(applicationInteractor::mapSelectedApp)
@@ -37,7 +35,7 @@ class ApplicationsViewModel(
             }
             .flowOn(Dispatchers.Default)
 
-    val unselectedAppsFlow: Flow<List<ApplicationInfo>> =
+    val unselectedAppsFlow: Flow<List<App>> =
         preferenceStorage.selectedAppsFlow
             .map { selected ->
                 appsList
@@ -50,21 +48,21 @@ class ApplicationsViewModel(
 
     fun setFocusModeStatus(focusModeOn: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            preferenceStorage.setFocusModeStatus(focusModeOn)
+            preferenceStorage.setAutoVpnStatus(focusModeOn)
         }
     }
 
     fun getFocusModeStatus(): Boolean {
-        return preferenceStorage.getFocusModeStatus()
+        return preferenceStorage.getAutoStatus()
     }
 
-    fun addToSelected(app: ApplicationInfo) {
+    fun addToSelected(app: App) {
         viewModelScope.launch(Dispatchers.Default) {
             preferenceStorage.addSelectedApp(app.packageName)
         }
     }
 
-    fun removeFromSelected(app: ApplicationInfo) {
+    fun removeFromSelected(app: App) {
         viewModelScope.launch(Dispatchers.Default) {
             preferenceStorage.removeSelectedApp(app.packageName)
         }

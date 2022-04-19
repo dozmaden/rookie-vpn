@@ -1,6 +1,6 @@
 package com.dozmaden.rookievpn.model
 
-data class Server(
+data class VpnServer(
     val country: String,
     val vpn: String,
     val vpnUsername: String,

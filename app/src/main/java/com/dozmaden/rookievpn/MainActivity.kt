@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        checkPermissions()
+//        checkPermissions()
     }
 
     private fun checkPermissions() {

@@ -1,40 +1,31 @@
-package com.dozmaden.rookievpn.utils
+package com.dozmaden.rookievpn.ui.apps
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import com.dozmaden.rookievpn.utils.appIcon
+import com.dozmaden.rookievpn.utils.appLabel
+import com.dozmaden.rookievpn.utils.getAppsList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-class AppInfosHolder(
+class AppInfoHolder(
     private val context: Context
 ) {
-    private var scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
-
     private val appsList: MutableList<String> = mutableListOf()
-    private val appIconByPackageName: MutableMap<String, Drawable?> = mutableMapOf()
+    private val appIconsByPackageName: MutableMap<String, Drawable?> = mutableMapOf()
     private val appLabelByPackageName: MutableMap<String, String> = mutableMapOf()
 
-    fun init() {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+
+    init {
         scope.launch {
             getAppsList()
                 .forEach {
-                    appIconByPackageName[it] = appIcon(it)
+                    appIconsByPackageName[it] = appIcon(it)
                     appLabelByPackageName[it] = appLabel(context, it)
                 }
-        }
-    }
-
-    fun getAppLabel(packageName: String): String {
-        return appLabelByPackageName[packageName] ?: appLabel(context, packageName).also {
-            appLabelByPackageName[packageName] = it
-        }
-    }
-
-    fun getAppIcon(packageName: String): Drawable? {
-        return appIconByPackageName[packageName] ?: appIcon(packageName).also {
-            appIconByPackageName[packageName] = it
         }
     }
 
@@ -47,6 +38,20 @@ class AppInfosHolder(
             .also {
                 appsList.clear()
                 appsList.addAll(it)
+            }
+    }
+
+    fun getAppLabel(packageName: String): String {
+        return appLabelByPackageName[packageName] ?: appLabel(context, packageName)
+            .also {
+                appLabelByPackageName[packageName] = it
+            }
+    }
+
+    fun getAppIcon(packageName: String): Drawable? {
+        return appIconsByPackageName[packageName] ?: appIcon(packageName)
+            .also {
+                appIconsByPackageName[packageName] = it
             }
     }
 }

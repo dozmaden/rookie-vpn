@@ -18,7 +18,7 @@
 
     <fragment
         android:id="@+id/navigation_applications"
-        android:name="com.dozmaden.rookievpn.ui.applications.ApplicationsFragment"
+        android:name="com.dozmaden.rookievpn.ui.apps.AppsFragment"
         tools:layout="@layout/fragment_applications" />
 
 </navigation>

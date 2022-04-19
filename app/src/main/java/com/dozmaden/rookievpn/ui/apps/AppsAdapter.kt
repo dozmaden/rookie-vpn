@@ -1,4 +1,4 @@
-package com.dozmaden.rookievpn.ui.applications
+package com.dozmaden.rookievpn.ui.apps
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -13,18 +13,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dozmaden.rookievpn.R.id
 import com.dozmaden.rookievpn.R.layout
-import com.dozmaden.rookievpn.model.ApplicationInfo
+import com.dozmaden.rookievpn.model.App
 
-class ApplicationsAdapter :
-    ListAdapter<ApplicationInfo, ApplicationsAdapter.ViewHolder>(DiffCallback) {
+class AppsAdapter :
+    ListAdapter<App, AppsAdapter.ViewHolder>(DiffCallback) {
 
     init {
         setHasStableIds(true)
     }
 
-    private var onAppClickListener: ((ApplicationInfo) -> Unit)? = null
+    private var onAppClickListener: ((App) -> Unit)? = null
 
-    fun setOnAppClickListener(listener: (ApplicationInfo) -> Unit) {
+    fun setOnAppClickListener(listener: (App) -> Unit) {
         onAppClickListener = listener
     }
 
@@ -54,7 +54,7 @@ class ApplicationsAdapter :
         private val card: CardView = view.findViewById(id.card)
 
         @SuppressLint("SetTextI18n")
-        fun bind(data: ApplicationInfo) {
+        fun bind(data: App) {
             appName.text = data.appLabel
             Glide.with(view)
                 .load(data.appIcon)
@@ -67,13 +67,16 @@ class ApplicationsAdapter :
         }
     }
 
-    private object DiffCallback : DiffUtil.ItemCallback<ApplicationInfo>() {
-        override fun areItemsTheSame(oldItem: ApplicationInfo, newItem: ApplicationInfo): Boolean =
+    private object DiffCallback : DiffUtil.ItemCallback<App>() {
+        override fun areItemsTheSame(
+            oldItem: App,
+            newItem: App
+        ): Boolean =
             oldItem.packageName == newItem.packageName
 
         override fun areContentsTheSame(
-            oldItem: ApplicationInfo,
-            newItem: ApplicationInfo
+            oldItem: App,
+            newItem: App
         ): Boolean =
             oldItem == newItem
     }

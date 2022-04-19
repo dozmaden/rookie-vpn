@@ -1,4 +1,4 @@
-package com.dozmaden.rookievpn.ui.applications
+package com.dozmaden.rookievpn.ui.apps
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -28,10 +28,10 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-class ApplicationsFragment : Fragment() {
+class AppsFragment : Fragment() {
 
     //    private val viewModel: ApplicationsViewModel by viewModels()
-    private lateinit var viewModel: ApplicationsViewModel
+    private lateinit var viewModel: AppsViewModel
 
     private lateinit var scrollView: NestedScrollView
     private lateinit var content: View
@@ -53,7 +53,7 @@ class ApplicationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(this)[ApplicationsViewModel::class.java]
+        viewModel = ViewModelProvider(this)[AppsViewModel::class.java]
 
         _binding = FragmentApplicationsBinding.inflate(inflater, container, false)
 
@@ -84,7 +84,7 @@ class ApplicationsFragment : Fragment() {
         selectedTitle = view.findViewById(R.id.selected_title)
         unselectedTitle = view.findViewById(R.id.unselected_title)
         selectedApps = view.findViewById(R.id.selected_apps)
-        val adapter = ApplicationsAdapter()
+        val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::removeFromSelected)
         selectedApps.adapter = adapter
 //        blacklistApps.itemAnimator = FadeInUpAnimator()
@@ -108,7 +108,7 @@ class ApplicationsFragment : Fragment() {
 
     private fun setupUnselectedApps(view: View) {
         unselectedApps = view.findViewById(R.id.unselected_apps)
-        val adapter = ApplicationsAdapter()
+        val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::addToSelected)
         unselectedApps.adapter = adapter
 //        allowedApps.itemAnimator = FadeInDownAnimator()
@@ -133,7 +133,7 @@ class ApplicationsFragment : Fragment() {
             val focusModeOn = !viewModel.getFocusModeStatus()
             viewModel.setFocusModeStatus(focusModeOn)
             val msg =
-                if (focusModeOn) "FocusMode has been started!" else "FocusMode has been stopped"
+                if (focusModeOn) "Auto-connect has been enabled!" else "Auto-connect stopped!"
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
 
@@ -148,9 +148,9 @@ class ApplicationsFragment : Fragment() {
                         }
                     focusModeButton.text =
                         if (focusModeOn && requireContext().isAccessibilitySettingsOn())
-                            "Stop FocusMode"
+                            "Stop Auto-connect"
                         else
-                            "Start FocusMode"
+                            "Start Auto-connect"
                 }
                     .flowOn(Dispatchers.Main.immediate)
                     .collect {}
@@ -166,7 +166,7 @@ class ApplicationsFragment : Fragment() {
                 .setPositiveButton("OK") { _, _ ->
                     Toast.makeText(
                         requireContext(),
-                        "Please turn on UsageManager service",
+                        "Please turn on VPN Auto-connect service",
                         Toast.LENGTH_SHORT
                     ).show()
                     val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
