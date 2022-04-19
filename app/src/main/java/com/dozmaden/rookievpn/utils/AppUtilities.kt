@@ -8,7 +8,6 @@ import bot.box.appusage.utils.UsageUtils
 import com.dozmaden.rookievpn.R
 
 object AppUtilities {
-
     fun Context.getAppsList(): List<ResolveInfo> {
         val main = Intent(Intent.ACTION_MAIN, null)
         main.addCategory(Intent.CATEGORY_LAUNCHER);

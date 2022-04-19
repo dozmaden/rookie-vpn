@@ -11,13 +11,11 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object VpnUtilities {
-
     fun isVpnConnectionActive(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: Network? = connectivityManager.activeNetwork
         val caps: NetworkCapabilities? = connectivityManager.getNetworkCapabilities(activeNetwork)
-
         return caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN) ?: false
     }
 
