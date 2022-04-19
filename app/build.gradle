@@ -72,4 +72,10 @@ dependencies {
     def lifecycleVersion = "2.4.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
+
+    // Material dialogs
+    def materialDialogsVersion = "3.3.0"
+    implementation "com.afollestad.material-dialogs:core:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:datetime:$materialDialogsVersion"
+    implementation "com.afollestad.material-dialogs:bottomsheets:$materialDialogsVersion"
 }

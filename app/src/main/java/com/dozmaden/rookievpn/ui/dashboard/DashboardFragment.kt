@@ -39,29 +39,4 @@ class DashboardFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-//    private fun getApps() {
-//        val activity: FragmentActivity = this.requireActivity()
-//        val packageManager = activity.packageManager
-//        val packageInfoList = packageManager.getInstalledPackages(0)
-//        for (info in packageInfoList) {
-//            if (!isUserApp(info) || AppConst.APP_PACKAGE_NAME.equals(info.packageName)) {
-//                continue
-//            }
-//            var applicationInfo: ApplicationInfo? = null
-//            var icon: Drawable? = null
-//            try {
-//                applicationInfo = packageManager.getApplicationInfo(info.packageName, 0)
-//                icon = applicationInfo.loadIcon(packageManager)
-//            } catch (e: PackageManager.NameNotFoundException) {
-//                e.printStackTrace()
-//            }
-//            val name =
-//                (if (applicationInfo != null) packageManager.getApplicationLabel(applicationInfo) else "unknown") as String
-//            val app = App(icon, name, info.packageName, bypassApps.contains(info.packageName))
-//            appList.add(app)
-//        }
-//        val arrayAdapter: ArrayAdapter<App> = AppArrayAdapter(this.getActivity(), appList)
-//        this.listView.setAdapter(arrayAdapter)
-//    }
 }

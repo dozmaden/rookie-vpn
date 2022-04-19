@@ -51,8 +51,8 @@ class SharedPreference(context: Context) {
         private const val SERVER_VPN_PASSWORD = "server_ovpn_password"
         private const val SERVER_COUNTRY = "server_country"
 
-        const val SELECTED_PREFS_NAME = "blacklist_prefs"
-        const val KEY_SELECTED = "key_apps_blacklist"
+        const val SELECTED_PREFS_NAME = "selected_prefs"
+        const val KEY_SELECTED = "key_apps_selected"
         const val KEY_FOCUS_MODE = "key_focus_mode"
     }
 
@@ -60,6 +60,12 @@ class SharedPreference(context: Context) {
         preferences = context.getSharedPreferences(APP_PREFS_NAME, Context.MODE_PRIVATE)
         preferencesEditor = preferences.edit()
         this.context = context
+    }
+
+    fun isSelectedApp(packageName: String): Boolean {
+        return getSelectedSet().find {
+            it == packageName
+        } != null
     }
 
     fun getFocusModeStatus(): Boolean {

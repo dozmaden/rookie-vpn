@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import bot.box.appusage.utils.UsageUtils
 import com.dozmaden.rookievpn.R
 
-
 //fun Context.isAccessibilitySettingsOn(): Boolean {
 //    try {
 //        val accessibilityEnabled = Settings.Secure.getInt(
@@ -30,7 +29,7 @@ import com.dozmaden.rookievpn.R
 
 fun Context.getAppsList(): List<ResolveInfo> {
     val main = Intent(Intent.ACTION_MAIN, null)
-    main.addCategory(Intent.CATEGORY_LAUNCHER)
+    main.addCategory(Intent.CATEGORY_LAUNCHER);
     return packageManager.queryIntentActivities(main, 0)
         .distinctBy {
             it.activityInfo.packageName

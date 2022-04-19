@@ -21,10 +21,9 @@ class ApplicationsViewModel(
     @SuppressLint("StaticFieldLeak")
     private val context = getApplication<Application>().applicationContext
 
-    private val applicationInfoHolder = AppInfosHolder(context)
-    private val applicationInteractor = ApplicationInteractor(applicationInfoHolder)
+    private val applicationInteractor = ApplicationInteractor(AppInfosHolder(context))
 
-    private val preferenceStorage: SharedPreference = SharedPreference(context)
+    public val preferenceStorage: SharedPreference = SharedPreference(context)
 
     private val appsList = applicationInteractor.getAppsList()
 
