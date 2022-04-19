@@ -11,9 +11,6 @@ import com.dozmaden.rookievpn.R
 
 object AppUtilities {
 
-    fun Context.isPermissionGranted(permission: String): Boolean =
-        ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED
-
     fun Context.getAppsList(): List<ResolveInfo> {
         val main = Intent(Intent.ACTION_MAIN, null)
         main.addCategory(Intent.CATEGORY_LAUNCHER);
