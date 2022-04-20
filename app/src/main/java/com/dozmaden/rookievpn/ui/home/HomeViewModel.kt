@@ -10,7 +10,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dozmaden.rookievpn.dto.NetworkInfo
-import com.dozmaden.rookievpn.model.VpnServer
 import com.dozmaden.rookievpn.preferences.VpnPreferences
 import com.dozmaden.rookievpn.repository.NetworkRepository
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
@@ -28,7 +27,6 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val context = getApplication<Application>().applicationContext
 
     private val preference: VpnPreferences = VpnPreferences(context)
-    private val vpnServer: VpnServer? = preference.vpnServer
 
     private val disposables = CompositeDisposable()
     private fun Disposable.onBind() = disposables.add(this)
@@ -101,7 +99,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     internal fun startVpn() {
-        vpnServer?.let {
+        preference.vpnServer?.let {
             connectToVpn(context, it)
         }
     }

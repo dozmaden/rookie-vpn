@@ -218,6 +218,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         updateVpnState()
 
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
         super.onResume()
     }
 

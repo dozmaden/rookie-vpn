@@ -52,7 +52,7 @@ class AppsAdapter :
 
         private val appName: TextView = view.findViewById(id.app_name)
         private val appIcon: ImageView = view.findViewById(id.app_image)
-        private val card: CardView = view.findViewById(id.card)
+        private val card: CardView = view.findViewById(id.app_card)
 
         @SuppressLint("SetTextI18n")
         fun bind(data: App) {

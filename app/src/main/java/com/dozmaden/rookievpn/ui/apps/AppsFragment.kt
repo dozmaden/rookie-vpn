@@ -20,7 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.dozmaden.rookievpn.R
-import com.dozmaden.rookievpn.databinding.FragmentApplicationsBinding
+import com.dozmaden.rookievpn.databinding.FragmentAppsBinding
 import com.dozmaden.rookievpn.utils.AccessibilityUtilities.isAccessibilitySettingsOn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
@@ -42,7 +42,7 @@ class AppsFragment : Fragment() {
 
     private lateinit var autoModeButton: Button
 
-    private var _binding: FragmentApplicationsBinding? = null
+    private var _binding: FragmentAppsBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -55,7 +55,7 @@ class AppsFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(this)[AppsViewModel::class.java]
 
-        _binding = FragmentApplicationsBinding.inflate(inflater, container, false)
+        _binding = FragmentAppsBinding.inflate(inflater, container, false)
 
         return binding.root
     }
@@ -75,14 +75,14 @@ class AppsFragment : Fragment() {
     }
 
     private fun setupScrollView(view: View) {
-        content = view.findViewById(R.id.content)
-        scrollView = view.findViewById(R.id.scroll_view)
+        content = view.findViewById(R.id.apps_content)
+        scrollView = view.findViewById(R.id.apps_scroll_view)
     }
 
     @SuppressLint("SetTextI18n")
     private fun setupSelectedApps(view: View) {
-        selectedTitle = view.findViewById(R.id.selected_title)
-        unselectedTitle = view.findViewById(R.id.unselected_title)
+        selectedTitle = view.findViewById(R.id.selected_apps_title)
+        unselectedTitle = view.findViewById(R.id.available_apps_title)
         selectedApps = view.findViewById(R.id.selected_apps)
 
         val adapter = AppsAdapter()
@@ -109,7 +109,7 @@ class AppsFragment : Fragment() {
     }
 
     private fun setupUnselectedApps(view: View) {
-        unselectedApps = view.findViewById(R.id.unselected_apps)
+        unselectedApps = view.findViewById(R.id.available_apps)
         val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::addToSelected)
         unselectedApps.adapter = adapter

@@ -3,39 +3,98 @@ package com.dozmaden.rookievpn.preferences
 import android.content.Context
 import android.content.SharedPreferences
 import com.dozmaden.rookievpn.model.VpnServer
+import com.dozmaden.rookievpn.utils.VpnUtilities.getServerList
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class VpnPreferences(context: Context) {
+class VpnPreferences(private val context: Context) {
 
-    private val preferences: SharedPreferences =
-        context.getSharedPreferences(APP_PREFS_NAME, Context.MODE_PRIVATE)
+    companion object {
+        private const val VPN_PREFS_NAME = "VpnPreference"
+        const val KEY_SELECTED = "key_servers_selected"
+    }
+
+    private var preferences: SharedPreferences =
+        context.getSharedPreferences(VPN_PREFS_NAME, Context.MODE_PRIVATE)
 
     private val preferencesEditor: SharedPreferences.Editor = preferences.edit()
 
-    companion object {
-        private const val APP_PREFS_NAME = "VpnPreference"
-        private const val SERVER_VPN = "server_ovpn"
-        private const val SERVER_VPN_USERNAME = "server_ovpn_user"
-        private const val SERVER_VPN_PASSWORD = "server_ovpn_password"
-        private const val SERVER_COUNTRY = "server_country"
+    private val _selectedServersFlow: MutableStateFlow<Set<String>> =
+        MutableStateFlow(getSelectedServersSet())
+    val selectedServersFlow: StateFlow<Set<String>> = _selectedServersFlow.asStateFlow()
+
+    private fun getSelectedServersSet(): MutableSet<String> {
+        val set = preferences.getStringSet(KEY_SELECTED, emptySet())
+        return set?.toMutableSet() ?: mutableSetOf()
+    }
+
+    val vpnServer: VpnServer?
+        get() =
+//            VpnServer(
+//            country = preferences.getString(VPN_COUNTRY, "Ozmaden")!!,
+//            vpn = preferences.getString(VPN_SERVER, "ozmaden.ovpn")!!,
+//            vpnUsername = preferences.getString(VPN_USERNAME, "vpn")!!,
+//            vpnPassword = preferences.getString(VPN_PASSWORD, "vpn")!!
+//        )
+            getFirstServer()
+
+    private fun getFirstServer(): VpnServer? {
+        var name = ""
+        val selected = getSelectedServersSet()
+        for (i in selected) {
+            name = i
+        }
+
+        val servers = getServerList()
+        for (i in servers) {
+            if (i.vpn == name) {
+                return i
+            }
+        }
+
+        return null
     }
 
     /**
      * Save server details
      * @param vpnServer details of ovpn server
      */
-    fun saveServer(vpnServer: VpnServer) {
-        preferencesEditor.putString(SERVER_COUNTRY, vpnServer.country)
-        preferencesEditor.putString(SERVER_VPN, vpnServer.vpn)
-        preferencesEditor.putString(SERVER_VPN_USERNAME, vpnServer.vpnUsername)
-        preferencesEditor.putString(SERVER_VPN_PASSWORD, vpnServer.vpnPassword)
-        preferencesEditor.commit()
+//    fun saveServer(vpnServer: VpnServer) {
+//        preferencesEditor.putString(VPN_COUNTRY, vpnServer.country)
+//        preferencesEditor.putString(VPN_SERVER, vpnServer.vpn)
+//        preferencesEditor.putString(VPN_USERNAME, vpnServer.vpnUsername)
+//        preferencesEditor.putString(VPN_PASSWORD, vpnServer.vpnPassword)
+//        preferencesEditor.commit()
+//    }
+
+    fun isSelectedServer(vpnName: String): Boolean {
+        return getSelectedServersSet().find {
+            it == vpnName
+        } != null
     }
 
-    val vpnServer: VpnServer?
-        get() = VpnServer(
-            country = preferences.getString(SERVER_COUNTRY, "Japan")!!,
-            vpn = preferences.getString(SERVER_VPN, "japan2.ovpn")!!,
-            vpnUsername = preferences.getString(SERVER_VPN_USERNAME, "vpn")!!,
-            vpnPassword = preferences.getString(SERVER_VPN_PASSWORD, "vpn")!!
-        )
+    fun addSelectedServer(vpnName: String) {
+        val selected = getSelectedServersSet()
+
+        for (i in selected) {
+            selected.remove(i)
+        }
+        selected.clear()
+
+        selected.add(vpnName)
+        preferencesEditor
+            .putStringSet(KEY_SELECTED, selected)
+            .apply()
+        _selectedServersFlow.value = selected
+    }
+
+    fun removeSelectedServer(vpnName: String) {
+        val selected = getSelectedServersSet()
+        selected.remove(vpnName)
+        preferencesEditor
+            .putStringSet(AppsPreferences.KEY_SELECTED, selected)
+            .apply()
+        _selectedServersFlow.value = selected
+    }
 }

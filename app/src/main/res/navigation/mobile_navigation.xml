@@ -7,9 +7,9 @@
     app:startDestination="@+id/navigation_home">
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.dozmaden.rookievpn.ui.dashboard.DashboardFragment"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_apps"
+        android:name="com.dozmaden.rookievpn.ui.apps.AppsFragment"
+        tools:layout="@layout/fragment_apps" />
 
     <fragment
         android:id="@+id/navigation_home"
@@ -17,8 +17,8 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_applications"
-        android:name="com.dozmaden.rookievpn.ui.apps.AppsFragment"
-        tools:layout="@layout/fragment_applications" />
+        android:id="@+id/navigation_servers"
+        android:name="com.dozmaden.rookievpn.ui.servers.ServersFragment"
+        tools:layout="@layout/fragment_servers" />
 
 </navigation>

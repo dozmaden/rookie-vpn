@@ -1,11 +1,15 @@
 <resources>
     <string name="app_name">Rookie VPN</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_applications">Applications</string>
+
+    <string name="title_apps">Applications</string>
+    <string name="title_home">Connect</string>
+    <string name="title_servers">Servers</string>
 
     <string name="pref_selected_list_title">Apps that will activate VPN during launch </string>
     <string name="pref_selected_list_key" translatable="false">selected_list_key</string>
+
+    <string name="pref_selected_servers_title">VPN will connect to these servers </string>
+    <string name="pref_selected_servers_key" translatable="false">selected_servers_key</string>
 
     <string name="accessibility_service_description">This service helps to detect any apps that is on the foreground.\nPlease enable it so that FocusMode can function normally.</string>
 

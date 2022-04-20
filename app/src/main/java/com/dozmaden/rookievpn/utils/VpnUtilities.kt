@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.util.Log
 import com.dozmaden.rookievpn.model.VpnServer
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
@@ -20,6 +21,9 @@ object VpnUtilities {
     }
 
     fun connectToVpn(context: Context, vpnServer: VpnServer) {
+
+        Log.d("IMHERE", vpnServer.vpn.toString())
+
         val conf = vpnServer.vpn.let { context.assets.open(it) }
         val isr = InputStreamReader(conf)
         val br = BufferedReader(isr)
@@ -48,5 +52,46 @@ object VpnUtilities {
 
     fun disconnectFromVpn() {
         OpenVPNThread.stop()
+    }
+
+    fun getServerList(): ArrayList<VpnServer> {
+        val servers: ArrayList<VpnServer> = ArrayList()
+        servers.add(
+            VpnServer(
+                "Japan",
+//                Utils.getImgURL(R.drawable.japan),
+                "japan2.ovpn",
+                "vpn",
+                "vpn"
+            )
+        )
+        servers.add(
+            VpnServer(
+                "United States",
+//                Utils.getImgURL(R.drawable.usa_flag),
+                "us.ovpn",
+                "freeopenvpn",
+                "416248023"
+            )
+        )
+        servers.add(
+            VpnServer(
+                "Sweden",
+//                Utils.getImgURL(R.drawable.sweden),
+                "sweden.ovpn",
+                "vpn",
+                "vpn"
+            )
+        )
+        servers.add(
+            VpnServer(
+                "Korea",
+//                Utils.getImgURL(R.drawable.korea),
+                "korea.ovpn",
+                "vpn",
+                "vpn"
+            )
+        )
+        return servers
     }
 }

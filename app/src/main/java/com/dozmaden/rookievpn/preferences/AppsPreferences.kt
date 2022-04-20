@@ -27,6 +27,12 @@ class AppsPreferences(context: Context) {
         MutableStateFlow(getSelectedSet())
     val selectedAppsFlow: StateFlow<Set<String>> = _selectedAppsFlow.asStateFlow()
 
+
+    private fun getSelectedSet(): MutableSet<String> {
+        val set = preferences.getStringSet(KEY_SELECTED, emptySet())
+        return set?.toMutableSet() ?: mutableSetOf()
+    }
+
     fun isSelectedApp(packageName: String): Boolean {
         return getSelectedSet().find {
             it == packageName
@@ -42,11 +48,6 @@ class AppsPreferences(context: Context) {
             .putBoolean(KEY_AUTO_MODE, on)
             .apply()
         _autoModeStatusFlow.value = on
-    }
-
-    private fun getSelectedSet(): MutableSet<String> {
-        val set = preferences.getStringSet(KEY_SELECTED, emptySet())
-        return set?.toMutableSet() ?: mutableSetOf()
     }
 
     fun addSelectedApp(packageName: String) {
