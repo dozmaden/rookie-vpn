@@ -4,6 +4,8 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.Uri
+import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.model.VpnServer
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
@@ -57,7 +59,8 @@ object VpnUtilities {
                 "United States",
                 "rookie.ovpn",
                 "vpn",
-                "vpn"
+                "vpn",
+                getImgURL(R.drawable.unitedstates)
             ),
         )
         servers.add(
@@ -66,16 +69,17 @@ object VpnUtilities {
 //                Utils.getImgURL(R.drawable.japan),
                 "japan.ovpn",
                 "vpn",
-                "vpn"
+                "vpn",
+                getImgURL(R.drawable.japan)
             )
         )
         servers.add(
             VpnServer(
                 "South Korea",
-//                Utils.getImgURL(R.drawable.japan),
                 "southkorea.ovpn",
                 "vpn",
-                "vpn"
+                "vpn",
+                getImgURL(R.drawable.southkorea)
             )
         )
         servers.add(
@@ -84,27 +88,36 @@ object VpnUtilities {
 //                Utils.getImgURL(R.drawable.japan),
                 "taiwan.ovpn",
                 "vpn",
-                "vpn"
+                "vpn",
+                getImgURL(R.drawable.taiwan)
             )
         )
         servers.add(
             VpnServer(
                 "India",
-//                Utils.getImgURL(R.drawable.japan),
                 "india.ovpn",
                 "vpn",
-                "vpn"
+                "vpn",
+                getImgURL(R.drawable.india)
             )
         )
         servers.add(
             VpnServer(
                 "Germany",
-//                Utils.getImgURL(R.drawable.japan),
                 "germany.ovpn",
                 "vpn",
-                "vpn"
+                "vpn",
+                getImgURL(R.drawable.germany)
             )
         )
         return servers
+    }
+
+    fun getImgURL(resourceId: Int): String? {
+        // Use BuildConfig.APPLICATION_ID instead of R.class.getPackage().getName() if not same
+        return Uri.parse(
+            "android.resource://" + (R::class.java.getPackage()?.name)
+                    + "/" + resourceId
+        ).toString()
     }
 }

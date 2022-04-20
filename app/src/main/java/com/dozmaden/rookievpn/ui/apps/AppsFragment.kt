@@ -3,6 +3,7 @@ package com.dozmaden.rookievpn.ui.apps
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.VpnService
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -127,10 +128,18 @@ class AppsFragment : Fragment() {
     private fun setupAutoModeButton(view: View) {
         autoModeButton = view.findViewById(R.id.focus_mode_button)
         autoModeButton.setOnClickListener {
+
+            val intent = VpnService.prepare(context)
+            if (intent != null) {
+                startActivityForResult(intent, 1)
+                return@setOnClickListener
+            }
+
             if (!requireContext().isAccessibilitySettingsOn()) {
                 startAccessibilityService()
                 return@setOnClickListener
             }
+
             val autoModeOn = !viewModel.getAutoModeStatus()
             viewModel.setAutoModeStatus(autoModeOn)
             val msg =

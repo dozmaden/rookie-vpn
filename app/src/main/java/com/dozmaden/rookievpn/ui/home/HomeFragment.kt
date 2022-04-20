@@ -45,6 +45,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
         updateVpnState()
 
+        val intent = VpnService.prepare(context)
+        if (intent != null) {
+            startActivityForResult(intent, 1)
+        }
+
         return binding.root
     }
 

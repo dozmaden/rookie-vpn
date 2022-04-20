@@ -23,7 +23,7 @@ class ServersViewModel(application: Application) : AndroidViewModel(application)
     private val servers: ArrayList<VpnServer> = getServerList()
 
     init {
-        if(!vpnPreferences.isServerSelected()){
+        if (!vpnPreferences.isServerSelected()) {
             vpnPreferences.addSelectedServer("rookie.ovpn")
         }
     }

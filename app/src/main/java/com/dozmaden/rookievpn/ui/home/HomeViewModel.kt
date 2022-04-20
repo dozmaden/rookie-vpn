@@ -15,6 +15,7 @@ import com.dozmaden.rookievpn.repository.NetworkRepository
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
 import com.dozmaden.rookievpn.utils.VpnUtilities.connectToVpn
 import com.dozmaden.rookievpn.utils.VpnUtilities.disconnectFromVpn
+import com.dozmaden.rookievpn.utils.VpnUtilities.isVpnConnectionActive
 import de.blinkt.openvpn.core.VpnStatus
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -64,16 +65,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     internal fun checkVpnActivity() {
         if (VpnStatus.isVPNActive()) {
-            var vpnInUse: Boolean? = false
-
-            val connectivityManager =
-                context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val activeNetwork: Network? = connectivityManager.activeNetwork
-            val caps: NetworkCapabilities? =
-                connectivityManager.getNetworkCapabilities(activeNetwork)
-            vpnInUse = caps?.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
-
-            if (vpnInUse == true) {
+            if (isVpnConnectionActive(context)) {
                 _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
             }
         } else {

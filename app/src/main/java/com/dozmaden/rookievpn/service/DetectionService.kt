@@ -104,6 +104,7 @@ class DetectionService : AccessibilityService() {
 
     private fun runVpnIfAppInSelected(packageName: String) {
         val activeVpn = isVpnConnectionActive(applicationContext)
+
         if (!activeVpn && appPreferences.isSelectedApp(packageName)) {
             vpnPreferences.vpnServer?.let {
                 connectToVpn(applicationContext, it)

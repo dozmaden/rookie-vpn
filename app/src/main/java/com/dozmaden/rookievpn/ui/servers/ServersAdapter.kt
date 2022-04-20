@@ -4,11 +4,13 @@ package com.dozmaden.rookievpn.ui.servers
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.model.VpnServer
 
@@ -50,15 +52,14 @@ class ServersAdapter : ListAdapter<VpnServer, ServersAdapter.ViewHolder>(DiffCal
     inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         private val serverName: TextView = view.findViewById(R.id.server_name)
-
-        //        private val serverIcon: ImageView = view.findViewById(R.id.server_image)
+        private val serverImage: ImageView = view.findViewById(R.id.server_image)
         private val card: CardView = view.findViewById(R.id.server_card)
 
         fun bind(data: VpnServer) {
             serverName.text = data.country
-//            Glide.with(view)
-//                .load(data.serverIcon)
-//                .into(serverIcon)
+            Glide.with(view)
+                .load(data.flagUrl)
+                .into(serverImage)
             card.setOnClickListener { onServerClickListener?.invoke(data) }
         }
 
