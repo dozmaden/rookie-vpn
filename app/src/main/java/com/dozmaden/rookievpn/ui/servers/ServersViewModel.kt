@@ -27,9 +27,9 @@ class ServersViewModel(application: Application) : AndroidViewModel(application)
             .map { selected ->
                 servers
                     .filter { server ->
-                        selected.contains(server.vpn)
+                        selected.contains(server.filename)
                     }
-                    .sortedBy { it.vpn }
+                    .sortedBy { it.filename }
             }
             .flowOn(Dispatchers.Default)
 
@@ -38,21 +38,21 @@ class ServersViewModel(application: Application) : AndroidViewModel(application)
             .map { selected ->
                 servers
                     .filter { server ->
-                        !selected.contains(server.vpn)
+                        !selected.contains(server.filename)
                     }
-                    .sortedBy { it.vpn }
+                    .sortedBy { it.filename }
             }
             .flowOn(Dispatchers.Default)
 
     fun addToSelected(server: VpnServer) {
         viewModelScope.launch(Dispatchers.Default) {
-            vpnPreferences.addSelectedServer(server.vpn)
+            vpnPreferences.addSelectedServer(server.filename)
         }
     }
 
     fun removeFromSelected(server: VpnServer) {
         viewModelScope.launch(Dispatchers.Default) {
-            vpnPreferences.removeSelectedServer(server.vpn)
+            vpnPreferences.removeSelectedServer(server.filename)
         }
     }
 }

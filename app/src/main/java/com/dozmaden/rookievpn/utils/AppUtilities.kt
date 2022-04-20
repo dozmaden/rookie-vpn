@@ -8,7 +8,7 @@ import bot.box.appusage.utils.UsageUtils
 import com.dozmaden.rookievpn.R
 
 object AppUtilities {
-    fun Context.getAppsList(): List<ResolveInfo> {
+    fun Context.getAppList(): List<ResolveInfo> {
         val main = Intent(Intent.ACTION_MAIN, null)
         main.addCategory(Intent.CATEGORY_LAUNCHER);
         return packageManager.queryIntentActivities(main, 0)
@@ -20,9 +20,9 @@ object AppUtilities {
             }
     }
 
-    fun appLabel(context: Context, packageName: String): String =
+    fun getAppLabel(context: Context, packageName: String): String =
         UsageUtils.parsePackageName(context.packageManager, packageName)
 
-    fun appIcon(packageName: String): Drawable? =
+    fun getAppIcon(packageName: String): Drawable? =
         UsageUtils.parsePackageIcon(packageName, R.drawable.ic_home_black_24dp)
 }

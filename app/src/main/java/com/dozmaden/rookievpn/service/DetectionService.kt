@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.dozmaden.rookievpn.MainActivity
 import com.dozmaden.rookievpn.R
-import com.dozmaden.rookievpn.preferences.AppsPreferences
+import com.dozmaden.rookievpn.preferences.AppPreferences
 import com.dozmaden.rookievpn.preferences.VpnPreferences
 import com.dozmaden.rookievpn.utils.VpnUtilities.connectToVpn
 import com.dozmaden.rookievpn.utils.VpnUtilities.isVpnConnectionActive
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class DetectionService : AccessibilityService() {
 
-    private lateinit var appsPreferences: AppsPreferences
+    private lateinit var appPreferences: AppPreferences
     private lateinit var vpnPreferences: VpnPreferences
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -32,7 +32,7 @@ class DetectionService : AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
-        appsPreferences = AppsPreferences(applicationContext)
+        appPreferences = AppPreferences(applicationContext)
         vpnPreferences = VpnPreferences(applicationContext)
     }
 
@@ -44,14 +44,14 @@ class DetectionService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         scope.launch {
-            appsPreferences.autoModeStatusFlow.collect {
+            appPreferences.autoModeStatusFlow.collect {
                 updateForeground(it)
             }
         }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        val autoModeOn = appsPreferences.getAutoStatus()
+        val autoModeOn = appPreferences.getAutoStatus()
         if (autoModeOn && event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             event.packageName?.toString()?.let { runVpnIfAppInSelected(it) }
         }
@@ -77,7 +77,7 @@ class DetectionService : AccessibilityService() {
                 .apply {
                     setContentTitle("Rookie VPN")
                     setContentText("Auto-connect on selected apps feature is on")
-                    setSmallIcon(R.drawable.ic_home_black_24dp)
+                    setSmallIcon(R.drawable.ic_baseline_vpn_key_24)
                     setContentIntent(pendingIntent)
                 }.build()
             startForeground(1, notification)
@@ -104,7 +104,7 @@ class DetectionService : AccessibilityService() {
 
     private fun runVpnIfAppInSelected(packageName: String) {
         val activeVpn = isVpnConnectionActive(applicationContext)
-        if (!activeVpn && appsPreferences.isSelectedApp(packageName)) {
+        if (!activeVpn && appPreferences.isSelectedApp(packageName)) {
             vpnPreferences.vpnServer?.let {
                 connectToVpn(applicationContext, it)
                 Toast.makeText(applicationContext, "VPN Launched!", Toast.LENGTH_SHORT).show()

@@ -8,11 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class VpnPreferences(private val context: Context) {
+class VpnPreferences(context: Context) {
 
     companion object {
-        private const val VPN_PREFS_NAME = "VpnPreference"
-        const val KEY_SELECTED = "key_servers_selected"
+        private const val VPN_PREFS_NAME = "vpn_servers_preference"
+        const val KEY_SERVERS_SELECTED = "key_servers_selected"
     }
 
     private var preferences: SharedPreferences =
@@ -25,34 +25,22 @@ class VpnPreferences(private val context: Context) {
     val selectedServersFlow: StateFlow<Set<String>> = _selectedServersFlow.asStateFlow()
 
     private fun getSelectedServersSet(): MutableSet<String> {
-        val set = preferences.getStringSet(KEY_SELECTED, emptySet())
+        val set = preferences.getStringSet(KEY_SERVERS_SELECTED, emptySet())
         return set?.toMutableSet() ?: mutableSetOf()
     }
 
     val vpnServer: VpnServer?
         get() =
-//            VpnServer(
-//            country = preferences.getString(VPN_COUNTRY, "Ozmaden")!!,
-//            vpn = preferences.getString(VPN_SERVER, "ozmaden.ovpn")!!,
-//            vpnUsername = preferences.getString(VPN_USERNAME, "vpn")!!,
-//            vpnPassword = preferences.getString(VPN_PASSWORD, "vpn")!!
-//        )
             getFirstServer()
 
     private fun getFirstServer(): VpnServer? {
-        var name = ""
-        val selected = getSelectedServersSet()
-        for (i in selected) {
-            name = i
-        }
-
+        val vpnName = getSelectedServersSet().toList()[0]
         val servers = getServerList()
-        for (i in servers) {
-            if (i.vpn == name) {
-                return i
+        for (server in servers) {
+            if (server.filename == vpnName) {
+                return server
             }
         }
-
         return null
     }
 
@@ -84,7 +72,7 @@ class VpnPreferences(private val context: Context) {
 
         selected.add(vpnName)
         preferencesEditor
-            .putStringSet(KEY_SELECTED, selected)
+            .putStringSet(KEY_SERVERS_SELECTED, selected)
             .apply()
         _selectedServersFlow.value = selected
     }
@@ -93,7 +81,7 @@ class VpnPreferences(private val context: Context) {
         val selected = getSelectedServersSet()
         selected.remove(vpnName)
         preferencesEditor
-            .putStringSet(AppsPreferences.KEY_SELECTED, selected)
+            .putStringSet(AppPreferences.KEY_SELECTED, selected)
             .apply()
         _selectedServersFlow.value = selected
     }

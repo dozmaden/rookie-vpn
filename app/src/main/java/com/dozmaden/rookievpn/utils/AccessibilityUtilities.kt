@@ -2,6 +2,7 @@ package com.dozmaden.rookievpn.utils
 
 import android.content.Context
 import android.provider.Settings
+import android.util.Log
 
 object AccessibilityUtilities {
     fun Context.isAccessibilitySettingsOn(): Boolean {
@@ -20,6 +21,7 @@ object AccessibilityUtilities {
                 }
             }
         } catch (e: Throwable) {
+            Log.d("AccessibilityUtilities", "Error!")
         }
         return false
     }

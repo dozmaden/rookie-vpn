@@ -78,15 +78,15 @@ class ServersFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedServersFlow.collect {
+                viewModel.selectedServersFlow.collect { it ->
                     selectedTitle.text = if (it.isEmpty()) {
-                        "Servers:"
+                        "Available Servers:"
                     } else {
-                        "Selected servers:"
+                        "Selected servers"
                     }
                     it.isNotEmpty().let {
                         availableTitle.isVisible = it
-                        availableTitle.text = "Servers:"
+                        availableTitle.text = "Available Servers:"
                     }
                     adapter.submitList(it)
                 }
@@ -96,6 +96,7 @@ class ServersFragment : Fragment() {
 
     private fun setupAvailableServers(view: View) {
         availableServers = view.findViewById(R.id.available_servers)
+
         val adapter = ServersAdapter()
         adapter.setOnServerClickListener(viewModel::addToSelected)
         availableServers.adapter = adapter

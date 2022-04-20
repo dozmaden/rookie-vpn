@@ -21,10 +21,7 @@ object VpnUtilities {
     }
 
     fun connectToVpn(context: Context, vpnServer: VpnServer) {
-
-        Log.d("IMHERE", vpnServer.vpn.toString())
-
-        val conf = vpnServer.vpn.let { context.assets.open(it) }
+        val conf = vpnServer.filename.let { context.assets.open(it) }
         val isr = InputStreamReader(conf)
         val br = BufferedReader(isr)
 
@@ -45,8 +42,8 @@ object VpnUtilities {
             context,
             config,
             vpnServer.country,
-            vpnServer.vpnUsername,
-            vpnServer.vpnPassword
+            vpnServer.username,
+            vpnServer.password
         )
     }
 
@@ -92,6 +89,12 @@ object VpnUtilities {
                 "vpn"
             )
         )
+        //            VpnServer(
+//            country = preferences.getString(VPN_COUNTRY, "Ozmaden")!!,
+//            vpn = preferences.getString(VPN_SERVER, "ozmaden.ovpn")!!,
+//            vpnUsername = preferences.getString(VPN_USERNAME, "vpn")!!,
+//            vpnPassword = preferences.getString(VPN_PASSWORD, "vpn")!!
+//        )
         return servers
     }
 }

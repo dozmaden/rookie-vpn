@@ -13,18 +13,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dozmaden.rookievpn.R.id
 import com.dozmaden.rookievpn.R.layout
-import com.dozmaden.rookievpn.model.App
+import com.dozmaden.rookievpn.model.InstalledApp
 
 class AppsAdapter :
-    ListAdapter<App, AppsAdapter.ViewHolder>(DiffCallback) {
+    ListAdapter<InstalledApp, AppsAdapter.ViewHolder>(DiffCallback) {
 
     init {
         setHasStableIds(true)
     }
 
-    private var onAppClickListener: ((App) -> Unit)? = null
+    private var onAppClickListener: ((InstalledApp) -> Unit)? = null
 
-    fun setOnAppClickListener(listener: (App) -> Unit) {
+    fun setOnAppClickListener(listener: (InstalledApp) -> Unit) {
         onAppClickListener = listener
     }
 
@@ -55,8 +55,8 @@ class AppsAdapter :
         private val card: CardView = view.findViewById(id.app_card)
 
         @SuppressLint("SetTextI18n")
-        fun bind(data: App) {
-            appName.text = data.appLabel
+        fun bind(data: InstalledApp) {
+            appName.text = data.appName
             Glide.with(view)
                 .load(data.appIcon)
                 .into(appIcon)
@@ -68,16 +68,16 @@ class AppsAdapter :
         }
     }
 
-    private object DiffCallback : DiffUtil.ItemCallback<App>() {
+    private object DiffCallback : DiffUtil.ItemCallback<InstalledApp>() {
         override fun areItemsTheSame(
-            oldItem: App,
-            newItem: App
+            oldItem: InstalledApp,
+            newItem: InstalledApp
         ): Boolean =
             oldItem.packageName == newItem.packageName
 
         override fun areContentsTheSame(
-            oldItem: App,
-            newItem: App
+            oldItem: InstalledApp,
+            newItem: InstalledApp
         ): Boolean =
             oldItem == newItem
     }

@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.dozmaden.rookievpn.model.App
-import com.dozmaden.rookievpn.preferences.AppsPreferences
+import com.dozmaden.rookievpn.model.InstalledApp
+import com.dozmaden.rookievpn.preferences.AppPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
@@ -23,47 +23,50 @@ class AppsViewModel(
     private val appInteractor = AppInteractor(appInfoHolder)
     private val appsList = appInteractor.getAppsList()
 
-    private val appsPreferences: AppsPreferences = AppsPreferences(context)
-    val autoModeStatusFlow = appsPreferences.autoModeStatusFlow
+    private val appPreferences: AppPreferences = AppPreferences(context)
+    val autoModeStatusFlow = appPreferences.autoModeStatusFlow
 
-    val selectedAppsFlow: Flow<List<App>> =
-        appsPreferences.selectedAppsFlow
-            .map {
-                it.map(appInteractor::mapSelectedApp)
-                    .sortedBy { app -> app.appLabel }
+    val selectedAppsFlow: Flow<List<InstalledApp>> =
+        appPreferences.selectedAppsFlow
+            .map { selected ->
+                appsList
+                    .filter { app ->
+                        selected.contains(app.packageName)
+                    }
+                    .sortedBy { it.appName }
             }
             .flowOn(Dispatchers.Default)
 
-    val unselectedAppsFlow: Flow<List<App>> =
-        appsPreferences.selectedAppsFlow
+    val unselectedAppsFlow: Flow<List<InstalledApp>> =
+        appPreferences.selectedAppsFlow
             .map { selected ->
                 appsList
                     .filter { app ->
                         !selected.contains(app.packageName)
                     }
-                    .sortedBy { it.appLabel }
+                    .sortedBy { it.appName }
             }
             .flowOn(Dispatchers.Default)
 
     fun setAutoModeStatus(focusModeOn: Boolean) {
         viewModelScope.launch(Dispatchers.Default) {
-            appsPreferences.setAutoVpnStatus(focusModeOn)
+            appPreferences.setAutoVpnStatus(focusModeOn)
         }
     }
 
     fun getAutoModeStatus(): Boolean {
-        return appsPreferences.getAutoStatus()
+        return appPreferences.getAutoStatus()
     }
 
-    fun addToSelected(app: App) {
+    fun addToSelected(app: InstalledApp) {
         viewModelScope.launch(Dispatchers.Default) {
-            appsPreferences.addSelectedApp(app.packageName)
+            appPreferences.addSelectedApp(app.packageName)
         }
     }
 
-    fun removeFromSelected(app: App) {
+    fun removeFromSelected(app: InstalledApp) {
         viewModelScope.launch(Dispatchers.Default) {
-            appsPreferences.removeSelectedApp(app.packageName)
+            appPreferences.removeSelectedApp(app.packageName)
         }
     }
 }

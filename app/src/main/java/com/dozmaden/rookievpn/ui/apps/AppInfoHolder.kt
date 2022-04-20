@@ -2,9 +2,9 @@ package com.dozmaden.rookievpn.ui.apps
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import com.dozmaden.rookievpn.utils.AppUtilities.appIcon
-import com.dozmaden.rookievpn.utils.AppUtilities.appLabel
-import com.dozmaden.rookievpn.utils.AppUtilities.getAppsList
+import com.dozmaden.rookievpn.utils.AppUtilities
+import com.dozmaden.rookievpn.utils.AppUtilities.getAppLabel
+import com.dozmaden.rookievpn.utils.AppUtilities.getAppList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,8 +23,9 @@ class AppInfoHolder(
         scope.launch {
             getAppsList()
                 .forEach {
-                    appIconsByPackageName[it] = appIcon(it)
-                    appLabelByPackageName[it] = appLabel(context, it)
+                    appIconsByPackageName[it] = AppUtilities.getAppIcon(it)
+                    appLabelByPackageName[it] =
+                        getAppLabel(context, it)
                 }
         }
     }
@@ -33,7 +34,7 @@ class AppInfoHolder(
         if (appsList.isNotEmpty()) {
             return appsList
         }
-        return context.getAppsList()
+        return context.getAppList()
             .map { it.activityInfo.packageName }
             .also {
                 appsList.clear()
@@ -42,14 +43,14 @@ class AppInfoHolder(
     }
 
     fun getAppLabel(packageName: String): String {
-        return appLabelByPackageName[packageName] ?: appLabel(context, packageName)
+        return appLabelByPackageName[packageName] ?: getAppLabel(context, packageName)
             .also {
                 appLabelByPackageName[packageName] = it
             }
     }
 
     fun getAppIcon(packageName: String): Drawable? {
-        return appIconsByPackageName[packageName] ?: appIcon(packageName)
+        return appIconsByPackageName[packageName] ?: AppUtilities.getAppIcon(packageName)
             .also {
                 appIconsByPackageName[packageName] = it
             }

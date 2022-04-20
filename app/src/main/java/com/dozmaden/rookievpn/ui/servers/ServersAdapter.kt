@@ -1,7 +1,6 @@
 package com.dozmaden.rookievpn.ui.servers
 
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -45,7 +44,7 @@ class ServersAdapter : ListAdapter<VpnServer, ServersAdapter.ViewHolder>(DiffCal
     }
 
     override fun getItemId(position: Int): Long {
-        return getItem(position).vpn.hashCode().toLong()
+        return getItem(position).filename.hashCode().toLong()
     }
 
     inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
@@ -56,10 +55,7 @@ class ServersAdapter : ListAdapter<VpnServer, ServersAdapter.ViewHolder>(DiffCal
         private val card: CardView = view.findViewById(R.id.server_card)
 
         fun bind(data: VpnServer) {
-            Log.d("IMHEREHMMM", serverName.text.toString())
-            Log.d("IMHERE", data.country)
             serverName.text = data.country
-            Log.d("IMHEREHMMM2", serverName.text.toString())
 //            Glide.with(view)
 //                .load(data.serverIcon)
 //                .into(serverIcon)
@@ -76,7 +72,7 @@ class ServersAdapter : ListAdapter<VpnServer, ServersAdapter.ViewHolder>(DiffCal
             oldItem: VpnServer,
             newItem: VpnServer
         ): Boolean =
-            oldItem.vpn == newItem.vpn
+            oldItem.filename == newItem.filename
 
         override fun areContentsTheSame(
             oldItem: VpnServer,
