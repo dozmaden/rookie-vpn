@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.databinding.FragmentAppsBinding
 import com.dozmaden.rookievpn.utils.AccessibilityUtilities.isAccessibilitySettingsOn
+import jp.wasabeef.recyclerview.animators.FadeInDownAnimator
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
@@ -89,10 +91,11 @@ class AppsFragment : Fragment() {
         val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::removeFromSelected)
         selectedApps.adapter = adapter
+        selectedApps.itemAnimator = FadeInUpAnimator()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedAppsFlow.collect {
+                viewModel.selectedAppsFlow.collect { it ->
                     selectedTitle.text =
                         if (it.isEmpty()) {
                             "Applications:"
@@ -114,6 +117,7 @@ class AppsFragment : Fragment() {
         val adapter = AppsAdapter()
         adapter.setOnAppClickListener(viewModel::addToSelected)
         unselectedApps.adapter = adapter
+        unselectedApps.itemAnimator = FadeInDownAnimator()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {

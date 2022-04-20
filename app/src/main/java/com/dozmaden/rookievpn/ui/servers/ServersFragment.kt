@@ -16,6 +16,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.databinding.FragmentServersBinding
+import jp.wasabeef.recyclerview.animators.FadeInDownAnimator
+import jp.wasabeef.recyclerview.animators.FadeInUpAnimator
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -75,6 +77,7 @@ class ServersFragment : Fragment() {
         val adapter = ServersAdapter()
         adapter.setOnServerClickListener(viewModel::removeFromSelected)
         selectedServers.adapter = adapter
+        selectedServers.itemAnimator = FadeInUpAnimator()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -100,6 +103,7 @@ class ServersFragment : Fragment() {
         val adapter = ServersAdapter()
         adapter.setOnServerClickListener(viewModel::addToSelected)
         availableServers.adapter = adapter
+        availableServers.itemAnimator = FadeInDownAnimator()
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
