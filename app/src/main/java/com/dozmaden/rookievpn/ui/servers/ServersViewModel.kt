@@ -22,6 +22,12 @@ class ServersViewModel(application: Application) : AndroidViewModel(application)
 
     private val servers: ArrayList<VpnServer> = getServerList()
 
+    init {
+        if(!vpnPreferences.isServerSelected()){
+            vpnPreferences.addSelectedServer("rookie.ovpn")
+        }
+    }
+
     val selectedServersFlow: Flow<List<VpnServer>> =
         vpnPreferences.selectedServersFlow
             .map { selected ->

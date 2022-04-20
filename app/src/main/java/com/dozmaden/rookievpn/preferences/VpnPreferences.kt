@@ -31,13 +31,16 @@ class VpnPreferences(context: Context) {
 
     val vpnServer: VpnServer?
         get() =
-            getFirstServer()
+            getServer()
 
-    private fun getFirstServer(): VpnServer? {
-        val vpnName = getSelectedServersSet().toList()[0]
+    private fun getServer(): VpnServer? {
+        if (getSelectedServersSet().size < 1) {
+            return getServerList()[0]
+        }
+        val selectedVpnName = getSelectedServersSet().toList()[0]
         val servers = getServerList()
         for (server in servers) {
-            if (server.filename == vpnName) {
+            if (server.filename == selectedVpnName) {
                 return server
             }
         }
@@ -79,10 +82,18 @@ class VpnPreferences(context: Context) {
 
     fun removeSelectedServer(vpnName: String) {
         val selected = getSelectedServersSet()
+        if (selected.size == 1) {
+            return
+        }
         selected.remove(vpnName)
         preferencesEditor
             .putStringSet(AppPreferences.KEY_SELECTED, selected)
             .apply()
         _selectedServersFlow.value = selected
     }
+
+    fun isServerSelected(): Boolean {
+        return getSelectedServersSet().size > 0
+    }
+
 }

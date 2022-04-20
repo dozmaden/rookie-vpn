@@ -82,7 +82,7 @@ class ServersFragment : Fragment() {
                     selectedTitle.text = if (it.isEmpty()) {
                         "Available Servers:"
                     } else {
-                        "Selected servers"
+                        "Selected server:"
                     }
                     it.isNotEmpty().let {
                         availableTitle.isVisible = it

@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.util.Log
 import com.dozmaden.rookievpn.model.VpnServer
 import de.blinkt.openvpn.OpenVpnApi
 import de.blinkt.openvpn.core.OpenVPNThread
@@ -55,46 +54,57 @@ object VpnUtilities {
         val servers: ArrayList<VpnServer> = ArrayList()
         servers.add(
             VpnServer(
+                "United States",
+                "rookie.ovpn",
+                "vpn",
+                "vpn"
+            ),
+        )
+        servers.add(
+            VpnServer(
                 "Japan",
 //                Utils.getImgURL(R.drawable.japan),
-                "japan2.ovpn",
+                "japan.ovpn",
                 "vpn",
                 "vpn"
             )
         )
         servers.add(
             VpnServer(
-                "United States",
-//                Utils.getImgURL(R.drawable.usa_flag),
-                "us.ovpn",
-                "freeopenvpn",
-                "416248023"
-            )
-        )
-        servers.add(
-            VpnServer(
-                "Sweden",
-//                Utils.getImgURL(R.drawable.sweden),
-                "sweden.ovpn",
+                "South Korea",
+//                Utils.getImgURL(R.drawable.japan),
+                "southkorea.ovpn",
                 "vpn",
                 "vpn"
             )
         )
         servers.add(
             VpnServer(
-                "Korea",
-//                Utils.getImgURL(R.drawable.korea),
-                "korea.ovpn",
+                "Taiwan",
+//                Utils.getImgURL(R.drawable.japan),
+                "taiwan.ovpn",
                 "vpn",
                 "vpn"
             )
         )
-        //            VpnServer(
-//            country = preferences.getString(VPN_COUNTRY, "Ozmaden")!!,
-//            vpn = preferences.getString(VPN_SERVER, "ozmaden.ovpn")!!,
-//            vpnUsername = preferences.getString(VPN_USERNAME, "vpn")!!,
-//            vpnPassword = preferences.getString(VPN_PASSWORD, "vpn")!!
-//        )
+        servers.add(
+            VpnServer(
+                "India",
+//                Utils.getImgURL(R.drawable.japan),
+                "india.ovpn",
+                "vpn",
+                "vpn"
+            )
+        )
+        servers.add(
+            VpnServer(
+                "Germany",
+//                Utils.getImgURL(R.drawable.japan),
+                "germany.ovpn",
+                "vpn",
+                "vpn"
+            )
+        )
         return servers
     }
 }
