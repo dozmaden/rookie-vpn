@@ -2,10 +2,6 @@ package com.dozmaden.rookievpn.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkCapabilities
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
