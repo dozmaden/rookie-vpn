@@ -27,7 +27,7 @@ class AuthFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val authPref: AuthPreferences = AuthPreferences(requireContext())
+        val authPref = AuthPreferences(requireContext())
 
         _binding = FragmentAuthBinding.inflate(layoutInflater)
 
