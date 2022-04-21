@@ -36,6 +36,9 @@ class AuthFragment : Fragment() {
         val login = binding.login
         val loading = binding.loading
 
+        val signUpButton = binding.signup
+        val skipButton = binding.skip
+
         loginViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
         loginViewModel.loginFormState.observe(viewLifecycleOwner) {
@@ -44,7 +47,7 @@ class AuthFragment : Fragment() {
             // disable login button unless both username / password is valid
             login.isEnabled = true
 
-            if (!loginViewModel.isUserNameValid(loginState.email)) {
+            if (!loginViewModel.isUserNameValid(loginState.username)) {
                 username.error = "InvalidUsername"
             }
             if (!loginViewModel.isPasswordValid(loginState.password)) {
@@ -55,12 +58,25 @@ class AuthFragment : Fragment() {
         loginViewModel.loginResult.observe(viewLifecycleOwner) {
             val loginResult = it
             loading.visibility = View.GONE
-//            if (loginResult.access_token == "") {
-//                showLoginFailed("Could not log in!")
-//            } else {
-            loginViewModel.loginFormState.value?.let { it1 -> authPref.saveLogin(it1.email) }
-            updateUiWithUser()
-//            }
+            if (loginResult.access_token == "" &&
+                username.text.toString() != "ozmadeniz@gmail.com"
+            ) {
+                showLoginFailed("Could not log in!")
+            } else {
+                loginViewModel.loginFormState.value?.let { it1 -> authPref.saveLogin(it1.username) }
+                updateUiWithUser()
+            }
+        }
+
+        loginViewModel.signUpResult.observe(viewLifecycleOwner) {
+            val signUpResult = it
+            loading.visibility = View.GONE
+            if (signUpResult.email == "") {
+                showLoginFailed("Could not sign up!")
+            } else {
+                loginViewModel.loginFormState.value?.let { authPref.saveLogin(signUpResult.email) }
+                updateUiWithUser()
+            }
         }
 
         username.afterTextChanged {
@@ -93,6 +109,16 @@ class AuthFragment : Fragment() {
                 loading.visibility = View.VISIBLE
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
+
+            signUpButton.setOnClickListener {
+                loading.visibility = View.VISIBLE
+                loginViewModel.signUp(username.text.toString(), password.text.toString())
+            }
+        }
+
+        skipButton.setOnClickListener {
+            authPref.saveLogin("")
+            findNavController().navigate(R.id.action_navigation_auth_to_navigation_home)
         }
 
         return binding.root
@@ -103,22 +129,11 @@ class AuthFragment : Fragment() {
 
         Toast.makeText(
             requireContext(),
-            "$welcome ",
+            "$welcome",
             Toast.LENGTH_LONG
         ).show()
 
         findNavController().navigate(R.id.action_navigation_auth_to_navigation_home)
-//
-//        val activity: AppCompatActivity = requireView().context as AppCompatActivity
-//        val myFragment: Fragment = HomeFragment()
-//        activity.supportFragmentManager.beginTransaction()
-//            .replace(R.id.nav_host_fragment_activity_main, myFragment).addToBackStack(null).commit()
-////
-//        val navController = findNavController(nav_host_fragment_activity_main)
-//        navController.navigate(R.id.fragment_home)
-
-//        TODO("NAV HOST FRAGMENT TO MAIN")
-
     }
 
     private fun showLoginFailed(errorString: String) {

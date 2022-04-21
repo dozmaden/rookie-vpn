@@ -27,6 +27,8 @@
 
         android:supportsRtl="true"
         android:theme="@style/Theme.RookieVPN"
+        android:usesCleartextTraffic="true"
+
         tools:replace="android:extractNativeLibs">
 
         <activity

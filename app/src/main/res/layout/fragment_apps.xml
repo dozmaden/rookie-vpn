@@ -22,9 +22,9 @@
         android:id="@+id/apps_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="20dp"
+        android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@id/focus_mode_button">
 
         <androidx.constraintlayout.widget.ConstraintLayout

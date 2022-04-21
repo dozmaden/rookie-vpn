@@ -65,6 +65,15 @@ object VpnUtilities {
         )
         servers.add(
             VpnServer(
+                "United Kingdom",
+                "uk.ovpn",
+                "vpn",
+                "vpn",
+                getImgURL(R.drawable.unitedkingdom)
+            )
+        )
+        servers.add(
+            VpnServer(
                 "Japan",
 //                Utils.getImgURL(R.drawable.japan),
                 "japan.ovpn",

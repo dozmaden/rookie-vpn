@@ -5,9 +5,10 @@ import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.dto.LoginInfo
 import com.dozmaden.rookievpn.dto.LoginResponse
+import com.dozmaden.rookievpn.dto.SignUpInfo
+import com.dozmaden.rookievpn.dto.SignUpResponse
 import com.dozmaden.rookievpn.repository.RookieVpnRepository
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
@@ -20,6 +21,9 @@ class AuthViewModel : ViewModel() {
     private val _loginResult = MutableLiveData<LoginResponse>()
     val loginResult: LiveData<LoginResponse> = _loginResult
 
+    private val _signUpResult = MutableLiveData<SignUpResponse>()
+    val signUpResult: LiveData<SignUpResponse> = _signUpResult
+
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
 
@@ -31,28 +35,33 @@ class AuthViewModel : ViewModel() {
                     _loginResult.postValue(info)
                 },
                 onError = {
-                    _loginResult.postValue(LoginResponse("", ""))
+                    _loginResult.postValue(
+                        LoginResponse("", "")
+                    )
                     Log.d("ERROR", "erroronlogin")
                 }
             )
-//        val result = loginRepository.login(username, password)
-//
-//        if (result is Result.Success) {
-//            _loginResult.value =
-//                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
-//        } else {
-//            _loginResult.value = LoginResult(error = R.string.login_failed)
-//        }
+    }
+
+    fun signUp(username: String, password: String) {
+        // can be launched in a separate asynchronous job
+        val signUpInfo = SignUpInfo(username, "", "", password)
+        RookieVpnRepository.signup(signUpInfo).observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onSuccess = { info ->
+                    Log.d("SUCCESS", "signed up!")
+                    _signUpResult.postValue(info)
+                },
+                onError = {
+                    _signUpResult.postValue(
+                        SignUpResponse("", "", "", "")
+                    )
+                    Log.d("ERROR", "can't sign up!")
+                }
+            )
     }
 
     fun loginDataChanged(username: String, password: String) {
-//        if (!isUserNameValid(username)) {
-//            _loginForm.value = LoginInfo(usernameError = R.string.invalid_username)
-//        } else if (!isPasswordValid(password)) {
-//            _loginForm.value = LoginFormState(passwordError = R.string.invalid_password)
-//        } else {
-//            _loginForm.value = LoginFormState(isDataValid = true)
-//        }
         _loginForm.value = LoginInfo(username, password)
     }
 
