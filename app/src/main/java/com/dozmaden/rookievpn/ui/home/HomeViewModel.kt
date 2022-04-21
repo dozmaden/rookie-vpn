@@ -99,4 +99,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         disconnectFromVpn()
         _connectionStatus.postValue(VpnConnectionStatus.NOT_CONNECTED)
     }
+
+    internal fun getVpnCountry(): String? {
+        return preference.vpnServer?.country
+    }
 }

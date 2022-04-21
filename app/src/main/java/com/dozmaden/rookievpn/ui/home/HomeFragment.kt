@@ -16,11 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.databinding.FragmentHomeBinding
 import com.dozmaden.rookievpn.dto.NetworkInfo
 import com.dozmaden.rookievpn.preferences.AuthPreferences
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
+import com.dozmaden.rookievpn.utils.VpnUtilities.getCountryFlag
 
 class HomeFragment : Fragment(), View.OnClickListener {
 
@@ -104,6 +106,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private fun setVpnConnectionStatus(status: VpnConnectionStatus) {
         binding.progressCircle.visibility = View.INVISIBLE
         binding.connectionInfo.visibility = View.INVISIBLE
+        val image = binding.serverImage
         when (status) {
             VpnConnectionStatus.NOT_CONNECTED -> {
                 setConnectionStatusText(
@@ -123,7 +126,10 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     "Connected to VPN!",
                     Color.parseColor("#1bc900")
                 )
-                binding.connectionInfo.visibility = View.VISIBLE
+
+                Glide.with(requireContext())
+                    .load(viewModel.getVpnCountry()?.let { getCountryFlag(it) })
+                    .into(image)
             }
             VpnConnectionStatus.DISCONNECTED -> {
                 setConnectionStatusText(

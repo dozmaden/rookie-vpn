@@ -64,6 +64,17 @@
             android:gravity="center"
             android:orientation="horizontal">
 
+            <ImageView
+                android:id="@+id/server_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:transitionName="profile"
+                android:layout_marginRight="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/country"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/country"
                 android:layout_width="wrap_content"
@@ -72,9 +83,9 @@
                 android:textAlignment="center"
                 android:textSize="26sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/server_image"
                 app:layout_constraintTop_toTopOf="@id/ip_address" />
-
+]
 
             <TextView
                 android:id="@+id/region"
@@ -84,7 +95,7 @@
                 android:textAlignment="center"
                 android:textSize="26sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@id/country"
+                app:layout_constraintStart_toEndOf="@id/country"
                 app:layout_constraintTop_toTopOf="parent" />
 
         </LinearLayout>

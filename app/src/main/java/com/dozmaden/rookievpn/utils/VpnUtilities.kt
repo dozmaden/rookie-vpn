@@ -1,6 +1,7 @@
 package com.dozmaden.rookievpn.utils
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
@@ -128,5 +129,19 @@ object VpnUtilities {
             "android.resource://" + (R::class.java.getPackage()?.name)
                     + "/" + resourceId
         ).toString()
+    }
+
+    fun getCountryFlag(country: String): String? {
+        return when (country) {
+            "Russia" -> getImgURL(R.drawable.russia)
+            "United States" -> getImgURL(R.drawable.unitedstates)
+            "United Kingdom" -> getImgURL(R.drawable.unitedkingdom)
+            "Japan" -> getImgURL(R.drawable.japan)
+            "South Korea" -> getImgURL(R.drawable.southkorea)
+            "India" -> getImgURL(R.drawable.india)
+            "Germany" -> getImgURL(R.drawable.germany)
+            "Taiwan" -> getImgURL(R.drawable.taiwan)
+            else -> {""}
+        }
     }
 }
