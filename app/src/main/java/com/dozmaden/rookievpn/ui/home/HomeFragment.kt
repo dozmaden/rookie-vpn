@@ -114,7 +114,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
             VpnConnectionStatus.CONNECTED -> {
                 setConnectionStatusText(
                     "Connected to VPN!",
-                    Color.parseColor("#04ff00")
+                    Color.parseColor("#1bc900")
                 )
                 binding.connectionInfo.visibility = View.VISIBLE
             }
@@ -133,18 +133,33 @@ class HomeFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setButtonConnectionStatus(status: VpnConnectionStatus) {
-        binding.connectButton.text =
-            when (status) {
-                VpnConnectionStatus.CONNECTED -> {
-                    "Disconnect"
-                }
-                VpnConnectionStatus.CONNECTING -> {
-                    "Connecting..."
-                }
-                else -> {
-                    "Connect"
-                }
+//        binding.connectButton.text =
+//            when (status) {
+//                VpnConnectionStatus.CONNECTED -> {
+//                    "Disconnect"
+//                }
+//                VpnConnectionStatus.CONNECTING -> {
+//                    "Connecting..."
+//                }
+//                else -> {
+//                    "Connect"
+//                }
+//            }
+
+        when (status) {
+            VpnConnectionStatus.CONNECTED -> {
+                binding.connectButton.text = "Disconnect"
+                binding.connectButton.setBackgroundColor(Color.parseColor("#ff0000"))
             }
+            VpnConnectionStatus.CONNECTING -> {
+                binding.connectButton.text = "Connecting..."
+                binding.connectButton.setBackgroundColor(Color.parseColor("#001eff"))
+            }
+            else -> {
+                binding.connectButton.text = "Connect"
+                binding.connectButton.setBackgroundColor(Color.parseColor("#159e00"))
+            }
+        }
     }
 
     private fun connectToVpn() {

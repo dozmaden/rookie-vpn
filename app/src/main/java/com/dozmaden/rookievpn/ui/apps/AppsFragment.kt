@@ -3,6 +3,7 @@ package com.dozmaden.rookievpn.ui.apps
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.net.VpnService
 import android.os.Bundle
 import android.provider.Settings
@@ -104,7 +105,7 @@ class AppsFragment : Fragment() {
                         }
                     it.isNotEmpty().let {
                         unselectedTitle.isVisible = it
-                        unselectedTitle.text = "Applications:"
+                        unselectedTitle.text = "Available Applications:"
                     }
                     adapter.submitList(it)
                 }
@@ -146,30 +147,49 @@ class AppsFragment : Fragment() {
 
             val autoModeOn = !viewModel.getAutoModeStatus()
             viewModel.setAutoModeStatus(autoModeOn)
-            val msg =
-                if (autoModeOn) {
-                    "Auto-connect has been enabled!"
-                } else {
-                    "Auto-connect stopped!"
-                }
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+
+            if (autoModeOn) {
+//                autoModeButton.setBackgroundColor(Color.parseColor("#ff0000"))
+                val msg = "Auto-connect has been enabled!"
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            } else {
+//                autoModeButton.setBackgroundColor(Color.parseColor("#159e00"))
+                val msg = "Auto-connect stopped!"
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedAppsFlow.combine(viewModel.autoModeStatusFlow) { selected, focusModeOn ->
-                    autoModeButton.isEnabled =
-                        if (focusModeOn && requireContext().isAccessibilitySettingsOn()) {
-                            true
-                        } else {
-                            selected.isNotEmpty()
-                        }
+                viewModel.selectedAppsFlow.combine(viewModel.autoModeStatusFlow) { selected, autoModeOn ->
                     autoModeButton.text =
-                        if (focusModeOn && requireContext().isAccessibilitySettingsOn()) {
+                        if (autoModeOn && requireContext().isAccessibilitySettingsOn()) {
                             "Stop Auto-connect"
                         } else {
                             "Start Auto-connect"
                         }
+                    autoModeButton.isEnabled =
+                        if (autoModeOn && requireContext().isAccessibilitySettingsOn()) {
+                            true
+                        } else {
+                            selected.isNotEmpty()
+                        }
+                    if (autoModeButton.isEnabled) {
+                        if (autoModeOn && requireContext().isAccessibilitySettingsOn()) {
+                            autoModeButton.setBackgroundColor(Color.parseColor("#ff0000"))
+                        } else {
+                            autoModeButton.setBackgroundColor(
+                                Color.parseColor("#159e00")
+                            )
+                        }
+                    }
+
+                    if (selected.isEmpty()) {
+                        autoModeButton.setBackgroundColor(
+                            Color.parseColor("#2f2f2f")
+                        )
+                        viewModel.setAutoModeStatus(false)
+                    }
                 }
                     .flowOn(Dispatchers.Main.immediate)
                     .collect {}

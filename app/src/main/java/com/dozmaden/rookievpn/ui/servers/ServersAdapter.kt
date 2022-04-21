@@ -51,12 +51,14 @@ class ServersAdapter : ListAdapter<VpnServer, ServersAdapter.ViewHolder>(DiffCal
 
     inner class ViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
-        private val serverName: TextView = view.findViewById(R.id.server_name)
+        private val serverCountry: TextView = view.findViewById(R.id.server_country)
+        private val serverFilename: TextView = view.findViewById(R.id.server_filename)
         private val serverImage: ImageView = view.findViewById(R.id.server_image)
         private val card: CardView = view.findViewById(R.id.server_card)
 
         fun bind(data: VpnServer) {
-            serverName.text = data.country
+            serverCountry.text = data.country
+            serverFilename.text = data.filename
             Glide.with(view)
                 .load(data.flagUrl)
                 .into(serverImage)

@@ -2,6 +2,7 @@ package com.dozmaden.rookievpn.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Application
+import android.net.Network
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -79,6 +80,9 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
             "CONNECTED" -> {
                 _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
+                preference.vpnServer?.let{
+                    _networkInfo.postValue(NetworkInfo(country = it.country, isp = it.filename ))
+                }
             }
             "DISCONNECTED" -> {
                 _connectionStatus.postValue(VpnConnectionStatus.DISCONNECTED)
