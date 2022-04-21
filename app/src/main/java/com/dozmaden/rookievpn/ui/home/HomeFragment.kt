@@ -15,9 +15,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.fragment.findNavController
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.databinding.FragmentHomeBinding
 import com.dozmaden.rookievpn.dto.NetworkInfo
+import com.dozmaden.rookievpn.preferences.AuthPreferences
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
 
 class HomeFragment : Fragment(), View.OnClickListener {
@@ -35,6 +37,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        val authPref: AuthPreferences = AuthPreferences(requireContext())
+        if (!authPref.isAuthorized()) {
+            findNavController().navigate(R.id.action_navigation_home_to_navigation_auth)
+        }
+
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)

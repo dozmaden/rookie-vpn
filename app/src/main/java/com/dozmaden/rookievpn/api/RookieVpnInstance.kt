@@ -6,7 +6,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-internal object NetworkInstance {
+internal object RookieVpnInstance {
     private val logInterceptor =
         HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
@@ -17,8 +17,8 @@ internal object NetworkInstance {
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-            .baseUrl(BASE_URL)
+            .baseUrl(SERVER_URL)
             .build()
 
-    val API: NetworkApi = retrofit.create(NetworkApi::class.java)
+    val SERVER_API: RookieVpnApi = retrofit.create(RookieVpnApi::class.java)
 }

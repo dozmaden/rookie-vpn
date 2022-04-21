@@ -2,13 +2,12 @@ package com.dozmaden.rookievpn.ui.home
 
 import android.annotation.SuppressLint
 import android.app.Application
-import android.net.Network
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dozmaden.rookievpn.dto.NetworkInfo
 import com.dozmaden.rookievpn.preferences.VpnPreferences
-import com.dozmaden.rookievpn.repository.NetworkRepository
+import com.dozmaden.rookievpn.repository.NetworkInfoRepository
 import com.dozmaden.rookievpn.state.VpnConnectionStatus
 import com.dozmaden.rookievpn.utils.VpnUtilities.connectToVpn
 import com.dozmaden.rookievpn.utils.VpnUtilities.disconnectFromVpn
@@ -40,7 +39,7 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     internal fun getConnectionStatus() = connectionStatus.value
 
     internal fun loadNetworkInfo() {
-        NetworkRepository.getNetworkInfo().observeOn(AndroidSchedulers.mainThread())
+        NetworkInfoRepository.getNetworkInfo().observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = { info ->
                     _networkInfo.postValue(info)
@@ -80,8 +79,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             }
             "CONNECTED" -> {
                 _connectionStatus.postValue(VpnConnectionStatus.CONNECTED)
-                preference.vpnServer?.let{
-                    _networkInfo.postValue(NetworkInfo(country = it.country, isp = it.filename ))
+                preference.vpnServer?.let {
+                    _networkInfo.postValue(NetworkInfo(country = it.country, isp = it.filename))
                 }
             }
             "DISCONNECTED" -> {

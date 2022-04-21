@@ -8,7 +8,7 @@ import android.net.Uri
 import com.dozmaden.rookievpn.R
 import com.dozmaden.rookievpn.model.VpnServer
 import de.blinkt.openvpn.OpenVpnApi
-import de.blinkt.openvpn.core.*
+import de.blinkt.openvpn.core.OpenVPNThread
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -38,7 +38,7 @@ object VpnUtilities {
                             """.trimIndent()
         }
         br.readLine()
-        
+
         OpenVpnApi.startVpn(
             context,
             config,
